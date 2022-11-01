@@ -43,7 +43,7 @@ Returns:
     (DesignerObject): The ship
 '''
 def create_ship() -> DesignerObject:
-    ship = image('ship.png')
+    ship = image('assets/ship.png')
     ship['scale'] = .75
     return ship
 
@@ -125,7 +125,7 @@ Returns:
     (DesignerObject): An asteroid object
 '''
 def create_asteroid() -> DesignerObject:
-    asteroid = image('asteroid.png')
+    asteroid = image('assets/asteroid.png')
     return asteroid
 
 '''
@@ -205,7 +205,7 @@ Returns:
     (DesignerObject): A bonus object
 '''
 def create_bonus() -> DesignerObject:
-    bonus = image('coin.png')
+    bonus = image('assets/coin.png')
     return bonus
 
 '''
@@ -270,7 +270,7 @@ Returns:
     (DesignerObject): A projectile object
 '''
 def create_projectile() -> DesignerObject:
-    proj = image('projectile.png')
+    proj = image('assets/projectile.png')
     return proj
 
 '''
@@ -461,7 +461,7 @@ Returns:
 '''        
 def create_particle() -> DesignerObject:
     # create particles for eye candy when an asteroid is destroyed
-    part = image('particle.png')
+    part = image('assets/particle.png')
     return part
 
 '''

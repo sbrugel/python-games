@@ -1,6 +1,6 @@
 # Python Games
 
-Some games I made/re-created in Python, using the [designer.py](https://designer-edu.github.io/designer/quickstart/quickstart.html#shapes) library (primarily).
+Some games I made/re-created in Python, using the [designer.py](https://designer-edu.github.io/designer/contents.html) library (primarily).
 
 ## Asteroids
 
@@ -21,9 +21,15 @@ The player controls a spaceship (represented by an arrow) by rotating and moving
 ### Controls
 
 `W` - Move up
+
 `A` - Move left
+
 `S` - Move down
+
 `D` - Move right
+
 `<-` - Rotate anti-clockwise
+
 `->` - Rotate clockwise
+
 `SPACE` - Fire projectile
