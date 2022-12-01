@@ -4,7 +4,7 @@ from pygame.locals import *
 # GUI constants
 FPS = 60
 WINDOWWIDTH = 640
-WINDOWHEIGHT = 480
+WINDOWHEIGHT = 550
 REVEALSPEED = 4 # box reveal speed (in pixels per tick)
 BOXSIZE = 40 # px
 GAPSIZE = 10 # px
@@ -16,10 +16,15 @@ boardheight = 4 # rows number
 # crashes program is the condition below is false to prevent further issues
 assert (boardwidth * boardheight) % 2 == 0, 'There must be an even number of boxes on the board'
 
-XMARGIN = int((WINDOWWIDTH - (boardwidth * (BOXSIZE + GAPSIZE))) / 2)
-YMARGIN = int((WINDOWHEIGHT - (boardheight * (BOXSIZE + GAPSIZE))) / 2)
+xmargin = int((WINDOWWIDTH - (boardwidth * (BOXSIZE + GAPSIZE))) / 2)
+ymargin = int((WINDOWHEIGHT - (boardheight * (BOXSIZE + GAPSIZE))) / 2)
 
-# color constants (RGB)
+# from cmd args
+difficulty = 0 # (4x4, 4x6, 6x6, 6x8, 8x8, 8x10, 10x10) (can be changed during a game if difficulty scaling is true)
+DIFFICULTY_SCALING = False # bool
+LIMITED_ATTEMPTS = False # bool
+
+# color consts; load palettes from files (below are all currently default) - these are also loaded from cmd args
 GRAY     = (100, 100, 100)
 NAVYBLUE = ( 60,  60, 100)
 WHITE    = (255, 255, 255)
@@ -30,8 +35,13 @@ YELLOW   = (255, 255,   0)
 ORANGE   = (255, 128,   0)
 PURPLE   = (255,   0, 255)
 CYAN     = (  0, 255, 255)
+BGCOLOR = NAVYBLUE # tuple with 3 ints
+assert difficulty >= 0 and difficulty <= 6, 'Difficulty must be from 0 - 6'
+assert DIFFICULTY_SCALING == True or DIFFICULTY_SCALING == False, 'Difficulty scaling must be True or False'
+assert LIMITED_ATTEMPTS == True or LIMITED_ATTEMPTS == False, 'Limited attempts must be True or False'
+assert len(BGCOLOR) == 3, 'BGCOLOR must be a color'
 
-BGCOLOR = NAVYBLUE
+# other color stuff
 LIGHTBGCOLOR = GRAY
 BOXCOLOR = WHITE
 HIGHLIGHTCOLOR = BLUE
@@ -52,7 +62,7 @@ ALLSHAPES = (DONUT, SQUARE, DIAMOND, LINES, OVAL, HEXAGON, HOURGLASS, SMILEY_FAC
 assert len(ALLCOLORS) * len(ALLSHAPES) * 2 >= boardwidth * boardheight, "Board is too big for the number of shapes/colors defined."
 
 def main():
-    global FPSCLOCK, DISPLAY
+    global FPSCLOCK, DISPLAY, boardwidth, boardheight, difficulty
     pygame.init()
     FPSCLOCK = pygame.time.Clock()
     DISPLAY = pygame.display.set_mode((WINDOWWIDTH, WINDOWHEIGHT))
@@ -61,7 +71,9 @@ def main():
     mousey = 0 # y coord of mousedown
     pygame.display.set_caption('Memory Puzzle')
 
-    mainBoard = getRandomizedBoard()
+    boardwidth, boardheight = setBoardSize(difficulty)
+
+    mainBoard = getRandomizedBoard(boardwidth, boardheight)
     revealedBoxes = generateRevealedBoxesData(False)
 
     firstSelection = None # (x, y) of first box clicked per turn
@@ -111,8 +123,14 @@ def main():
                             gameWonAnimation(mainBoard)
                             pygame.time.wait(2000)
 
+                            if DIFFICULTY_SCALING:
+                                difficulty += 1
+                                if difficulty > 6:
+                                    difficulty = 6
+                                boardwidth, boardheight = setBoardSize(difficulty)
+
                             # reset board
-                            mainBoard = getRandomizedBoard()
+                            mainBoard = getRandomizedBoard(boardwidth, boardheight)
                             revealedBoxes = generateRevealedBoxesData(False)
 
                             # show fully unrevealed board
@@ -128,6 +146,40 @@ def main():
         pygame.display.update()
         FPSCLOCK.tick(FPS)
 
+def setBoardSize(difficulty):
+    """
+    Sets board size based on difficulty (0 - 6)
+    """
+    global boardwidth, boardheight, xmargin, ymargin
+
+    if difficulty == 0:
+        boardheight = 4
+        boardwidth = 4
+    elif difficulty == 1:
+        boardheight = 4
+        boardwidth = 6
+    elif difficulty == 2:
+        boardheight = 6
+        boardwidth = 6
+    elif difficulty == 3:
+        boardheight = 6
+        boardwidth = 8
+    elif difficulty == 4:
+        boardheight = 8
+        boardwidth = 8
+    elif difficulty == 5:
+        boardheight = 8
+        boardwidth = 10
+    elif difficulty == 6:
+        boardheight = 10
+        boardwidth = 10
+    assert (boardwidth * boardheight) % 2 == 0, 'There must be an even number of boxes on the board'
+
+    xmargin = int((WINDOWWIDTH - (boardwidth * (BOXSIZE + GAPSIZE))) / 2)
+    ymargin = int((WINDOWHEIGHT - (boardheight * (BOXSIZE + GAPSIZE))) / 2)
+
+    return boardwidth, boardheight
+            
 
 def generateRevealedBoxesData(val):
     """
@@ -144,7 +196,7 @@ def generateRevealedBoxesData(val):
         revealedBoxes.append([val] * boardheight)
     return revealedBoxes
 
-def getRandomizedBoard():
+def getRandomizedBoard(boardwidth, boardheight):
     """
     Generates a randomized board, consisting of two of each combination of shape/color possible
 
@@ -196,8 +248,9 @@ def leftTopCoordsOfBox(boxx, boxy):
     Returns:
         (int, int): x/y coords of the top-left corner of the box
     """
-    left = boxx * (BOXSIZE + GAPSIZE) + XMARGIN
-    top = boxy * (BOXSIZE + GAPSIZE) + YMARGIN
+    global xmargin, ymargin
+    left = boxx * (BOXSIZE + GAPSIZE) + xmargin
+    top = boxy * (BOXSIZE + GAPSIZE) + ymargin
     return (left, top)
 
 def getBoxAtPixel(x, y):
