@@ -10,6 +10,7 @@ The player is presented with a board of boxes covering different icons (shapes o
 
 ## Changes from original
 
+- [New] Added three more shapes: hexagon, hourglass, smiley face
 - [Change] FPS increased to 60 with animation speeds changed accordingly
 - [Change] When boxes are revealed at start, number of boxes opened at a time scales with board size
 - [Fix] Window no longer freezes when revealing box contents after a game is won

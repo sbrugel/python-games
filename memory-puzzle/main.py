@@ -8,13 +8,16 @@ WINDOWHEIGHT = 480
 REVEALSPEED = 4 # box reveal speed (in pixels per tick)
 BOXSIZE = 40 # px
 GAPSIZE = 10 # px
-BOARDWIDTH = 4 # columns number
-BOARDHEIGHT = 4 # rows number
-# crashes program is the condition below is false to prevent further issues
-assert (BOARDWIDTH * BOARDHEIGHT) % 2 == 0, 'There must be an even number of boxes on the board'
 
-XMARGIN = int((WINDOWWIDTH - (BOARDWIDTH * (BOXSIZE + GAPSIZE))) / 2)
-YMARGIN = int((WINDOWHEIGHT - (BOARDHEIGHT * (BOXSIZE + GAPSIZE))) / 2)
+# dynamic game variables
+boardwidth = 4 # columns number
+boardheight = 4 # rows number
+
+# crashes program is the condition below is false to prevent further issues
+assert (boardwidth * boardheight) % 2 == 0, 'There must be an even number of boxes on the board'
+
+XMARGIN = int((WINDOWWIDTH - (boardwidth * (BOXSIZE + GAPSIZE))) / 2)
+YMARGIN = int((WINDOWHEIGHT - (boardheight * (BOXSIZE + GAPSIZE))) / 2)
 
 # color constants (RGB)
 GRAY     = (100, 100, 100)
@@ -39,14 +42,17 @@ SQUARE = 'square'
 DIAMOND = 'diamond'
 LINES = 'lines'
 OVAL = 'oval'
+HEXAGON = 'hexagon'
+HOURGLASS = 'HOURGLASS'
+SMILEY_FACE = 'smiley_face'
 
 # tuples for all combinations of icons
 ALLCOLORS = (RED, GREEN, BLUE, YELLOW, ORANGE, PURPLE, CYAN)
-ALLSHAPES = (DONUT, SQUARE, DIAMOND, LINES, OVAL)
-assert len(ALLCOLORS) * len(ALLSHAPES) * 2 >= BOARDWIDTH * BOARDHEIGHT, "Board is too big for the number of shapes/colors defined."
+ALLSHAPES = (DONUT, SQUARE, DIAMOND, LINES, OVAL, HEXAGON, HOURGLASS, SMILEY_FACE)
+assert len(ALLCOLORS) * len(ALLSHAPES) * 2 >= boardwidth * boardheight, "Board is too big for the number of shapes/colors defined."
 
 def main():
-    global FPSCLOCK, DISPLAY # global vars are bad, but these are constants so cannot be changed directly
+    global FPSCLOCK, DISPLAY
     pygame.init()
     FPSCLOCK = pygame.time.Clock()
     DISPLAY = pygame.display.set_mode((WINDOWWIDTH, WINDOWHEIGHT))
@@ -134,8 +140,8 @@ def generateRevealedBoxesData(val):
         (list): The new array of booleans containing every box's revealed status
     """
     revealedBoxes = []
-    for i in range(BOARDWIDTH):
-        revealedBoxes.append([val] * BOARDHEIGHT)
+    for i in range(boardwidth):
+        revealedBoxes.append([val] * boardheight)
     return revealedBoxes
 
 def getRandomizedBoard():
@@ -152,16 +158,16 @@ def getRandomizedBoard():
             icons.append((shape, color))
     
     random.shuffle(icons) # order of icons we will use
-    numIconsUsed = int(BOARDWIDTH * BOARDHEIGHT / 2)
+    numIconsUsed = int(boardwidth * boardheight / 2)
 
     icons = icons[:numIconsUsed] * 2 # make two of each icon being used
     random.shuffle(icons) # the actual order of icons on the board
 
     # add icons to board
     board = []
-    for x in range(BOARDWIDTH):
+    for x in range(boardwidth):
         column = []
-        for y in range(BOARDHEIGHT):
+        for y in range(boardheight):
             column.append(icons[0])
             del icons[0] # remove icons from list as we add them
         board.append(column)
@@ -205,8 +211,8 @@ def getBoxAtPixel(x, y):
     Returns:
         (int, int): box indices of the box at (x, y); will return (None, None) if a box does not exist
     """
-    for boxx in range(BOARDWIDTH):
-        for boxy in range(BOARDHEIGHT):
+    for boxx in range(boardwidth):
+        for boxy in range(boardheight):
             left, top = leftTopCoordsOfBox(boxx, boxy)
             boxRect = pygame.Rect(left, top, BOXSIZE, BOXSIZE)
             if boxRect.collidepoint(x, y):
@@ -223,6 +229,7 @@ def drawIcon(shape, color, boxx, boxy):
         boxx (int): Box index (x)
         boxy (int): Box index (y)
     """
+    tenth = int(BOXSIZE * 0.1)
     quarter = int(BOXSIZE * 0.25)
     half = int(BOXSIZE * 0.5)
 
@@ -242,6 +249,15 @@ def drawIcon(shape, color, boxx, boxy):
             pygame.draw.line(DISPLAY, color, (left + i, top + BOXSIZE - 1), (left + BOXSIZE - 1, top + i))
     elif shape == OVAL:
         pygame.draw.ellipse(DISPLAY, color, (left, top + quarter, BOXSIZE, half))
+    elif shape == HEXAGON:
+        pygame.draw.polygon(DISPLAY, color, ((left + quarter, top + tenth), (left + BOXSIZE - quarter, top + tenth), (left + BOXSIZE - tenth, top + half), (left + BOXSIZE - quarter, top + BOXSIZE - tenth), (left + quarter, top + BOXSIZE - tenth), (left + tenth, top + half)))
+    elif shape == HOURGLASS:
+        pygame.draw.polygon(DISPLAY, color, ((left + quarter, top + quarter), (left + 3*quarter, top + quarter), (left + quarter, top + 3*quarter), (left + 3*quarter, top + 3*quarter)))
+    elif shape == SMILEY_FACE:
+        pygame.draw.line(DISPLAY, color, (left + quarter, top + tenth), (left + quarter, top + half))
+        pygame.draw.line(DISPLAY, color, (left + 3*quarter, top + tenth), (left + 3*quarter, top + half))
+        pygame.draw.line(DISPLAY, color, (left + quarter, top + 3*quarter), (left + half, top + BOXSIZE - tenth))
+        pygame.draw.line(DISPLAY, color, (left + 3*quarter, top + 3*quarter), (left + half, top + BOXSIZE - tenth))
 
 def getShapeAndColor(board, boxx, boxy):
     """
@@ -290,8 +306,8 @@ def drawBoard(board, revealed):
     """
     Draws the full board and its boxes in each of their reveal states.
     """
-    for boxx in range(BOARDWIDTH):
-        for boxy in range(BOARDHEIGHT):
+    for boxx in range(boardwidth):
+        for boxy in range(boardheight):
             left, top = leftTopCoordsOfBox(boxx, boxy)
             if not revealed[boxx][boxy]:
                 # covered
@@ -315,11 +331,11 @@ def startGameAnimation(board):
     pygame.event.pump() # prevents game from freezing when this is called after a game is won
     coveredBoxes = generateRevealedBoxesData(False)
     boxes = []
-    for x in range(BOARDWIDTH):
-        for y in range(BOARDHEIGHT):
+    for x in range(boardwidth):
+        for y in range(boardheight):
             boxes.append((x, y))
     random.shuffle(boxes)
-    boxGroups = splitIntoGroupsOf(int(math.ceil((BOARDWIDTH * BOARDHEIGHT) / 8)), boxes)
+    boxGroups = splitIntoGroupsOf(int(math.ceil((boardwidth * boardheight) / 8)), boxes)
 
     drawBoard(board, coveredBoxes)
     for boxGroup in boxGroups:
