@@ -1,6 +1,20 @@
 import random, pygame, sys, math
 from pygame.locals import *
 
+sys.argv = sys.argv[1:] # remove first arg, that's the file name
+assert len(sys.argv) == 4, 'There must be exactly 4 args supplied'
+# arguments from cmd
+# 0 = difficulty (0-6)
+# 1 = difficulty scaling (0 or 1)
+# 2 = limited attempts (0 or 1)
+# 3 = color palette (0-2)
+
+sys.argv[0] = int(sys.argv[0])
+sys.argv[1] = int(sys.argv[1])
+sys.argv[2] = int(sys.argv[2])
+sys.argv[3] = int(sys.argv[3])
+assert sys.argv[3] >= 0 and sys.argv[3] <= 2, 'Color palette can only be 0 - 2'
+
 # GUI constants
 FPS = 60
 WINDOWWIDTH = 640
@@ -20,31 +34,38 @@ xmargin = int((WINDOWWIDTH - (boardwidth * (BOXSIZE + GAPSIZE))) / 2)
 ymargin = int((WINDOWHEIGHT - (boardheight * (BOXSIZE + GAPSIZE))) / 2)
 
 # from cmd args
-difficulty = 0 # (4x4, 4x6, 6x6, 6x8, 8x8, 8x10, 10x10) (can be changed during a game if difficulty scaling is true)
-DIFFICULTY_SCALING = False # bool
-LIMITED_ATTEMPTS = False # bool
+difficulty = sys.argv[0] # (4x4, 4x6, 6x6, 6x8, 8x8, 8x10, 10x10) (can be changed during a game if difficulty scaling is true)
+DIFFICULTY_SCALING = False if sys.argv[1] == 0 else True
+LIMITED_ATTEMPTS = False if sys.argv[2] == 0 else True
+PALETTE_FILE = 'data/palettes/default.txt'
+if sys.argv[3] == 1:
+    PALETTE_FILE = 'data/palettes/warmcolors.txt'
+elif sys.argv[3] == 2:
+    PALETTE_FILE = 'data/palettes/coldcolors.txt'
+
+f = open(PALETTE_FILE, "r") # open colors file for reading only
+lines = f.readlines()
 
 # color consts; load palettes from files (below are all currently default) - these are also loaded from cmd args
 GRAY     = (100, 100, 100)
 NAVYBLUE = ( 60,  60, 100)
 WHITE    = (255, 255, 255)
-RED      = (255,   0,   0)
-GREEN    = (  0, 255,   0)
-BLUE     = (  0,   0, 255)
-YELLOW   = (255, 255,   0)
-ORANGE   = (255, 128,   0)
-PURPLE   = (255,   0, 255)
-CYAN     = (  0, 255, 255)
-BGCOLOR = NAVYBLUE # tuple with 3 ints
+COLOR1   = (int(lines[0].split(' ')[0]), int(lines[0].split(' ')[1]), int(lines[0].split(' ')[2]))
+COLOR2   = (int(lines[1].split(' ')[0]), int(lines[1].split(' ')[1]), int(lines[1].split(' ')[2]))
+COLOR3   = (int(lines[2].split(' ')[0]), int(lines[2].split(' ')[1]), int(lines[2].split(' ')[2]))
+COLOR4   = (int(lines[3].split(' ')[0]), int(lines[3].split(' ')[1]), int(lines[3].split(' ')[2]))
+COLOR5   = (int(lines[4].split(' ')[0]), int(lines[4].split(' ')[1]), int(lines[4].split(' ')[2]))
+COLOR6   = (int(lines[5].split(' ')[0]), int(lines[5].split(' ')[1]), int(lines[5].split(' ')[2]))
+COLOR7   = (int(lines[6].split(' ')[0]), int(lines[6].split(' ')[1]), int(lines[6].split(' ')[2]))
 assert difficulty >= 0 and difficulty <= 6, 'Difficulty must be from 0 - 6'
 assert DIFFICULTY_SCALING == True or DIFFICULTY_SCALING == False, 'Difficulty scaling must be True or False'
 assert LIMITED_ATTEMPTS == True or LIMITED_ATTEMPTS == False, 'Limited attempts must be True or False'
-assert len(BGCOLOR) == 3, 'BGCOLOR must be a color'
 
 # other color stuff
+BGCOLOR = NAVYBLUE
 LIGHTBGCOLOR = GRAY
 BOXCOLOR = WHITE
-HIGHLIGHTCOLOR = BLUE
+HIGHLIGHTCOLOR = COLOR3
 
 # shape constants
 DONUT = 'donut'
@@ -57,7 +78,7 @@ HOURGLASS = 'HOURGLASS'
 SMILEY_FACE = 'smiley_face'
 
 # tuples for all combinations of icons
-ALLCOLORS = (RED, GREEN, BLUE, YELLOW, ORANGE, PURPLE, CYAN)
+ALLCOLORS = (COLOR1, COLOR2, COLOR3, COLOR4, COLOR5, COLOR6, COLOR7)
 ALLSHAPES = (DONUT, SQUARE, DIAMOND, LINES, OVAL, HEXAGON, HOURGLASS, SMILEY_FACE)
 assert len(ALLCOLORS) * len(ALLSHAPES) * 2 >= boardwidth * boardheight, "Board is too big for the number of shapes/colors defined."
 

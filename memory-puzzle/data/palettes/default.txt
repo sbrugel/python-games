@@ -1,0 +1,10 @@
+255 0 0
+0 255 0
+0 0 255
+255 255 0
+255 128 0
+255 0 255
+0 255 255
+
+# NOTES (i'm putting this here since the game only reads lines 1-7 of these files)
+to make your own palette, simply have 7 lines, each with three numerical values 0-255 separated with a space, these represent the RGB values of the colors you want to use
