@@ -110,7 +110,7 @@ def main():
     while True:
         mouseClicked = False
 
-        attempts_text_surf = font.render(f'You have {attemptsleft} wrong guesses left' if LIMITED_ATTEMPTS else '', True, (255,255,255), BGCOLOR)
+        attempts_text_surf = font.render(f'You have {attemptsleft} wrong guess' + ('es' if attemptsleft > 1 else '') + ' left' if LIMITED_ATTEMPTS else '', True, (255,255,255), BGCOLOR)
         attempts_text_rect = attempts_text_surf.get_rect()
         attempts_text_rect.center = (155, 540)
 
