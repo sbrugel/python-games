@@ -22,10 +22,12 @@ WINDOWHEIGHT = 550
 REVEALSPEED = 4 # box reveal speed (in pixels per tick)
 BOXSIZE = 40 # px
 GAPSIZE = 10 # px
+WRONG_GUESS_RATIO = 2
 
 # dynamic game variables
 boardwidth = 4 # columns number
 boardheight = 4 # rows number
+attemptsleft = 4
 
 # crashes program is the condition below is false to prevent further issues
 assert (boardwidth * boardheight) % 2 == 0, 'There must be an even number of boxes on the board'
@@ -47,6 +49,7 @@ f = open(PALETTE_FILE, "r") # open colors file for reading only
 lines = f.readlines()
 
 # color consts; load palettes from files (below are all currently default) - these are also loaded from cmd args
+DARKGRAY = (50, 50, 50)
 GRAY     = (100, 100, 100)
 NAVYBLUE = ( 60,  60, 100)
 WHITE    = (255, 255, 255)
@@ -62,7 +65,7 @@ assert DIFFICULTY_SCALING == True or DIFFICULTY_SCALING == False, 'Difficulty sc
 assert LIMITED_ATTEMPTS == True or LIMITED_ATTEMPTS == False, 'Limited attempts must be True or False'
 
 # other color stuff
-BGCOLOR = NAVYBLUE
+BGCOLOR = DARKGRAY
 LIGHTBGCOLOR = GRAY
 BOXCOLOR = WHITE
 HIGHLIGHTCOLOR = COLOR3
@@ -83,16 +86,18 @@ ALLSHAPES = (DONUT, SQUARE, DIAMOND, LINES, OVAL, HEXAGON, HOURGLASS, SMILEY_FAC
 assert len(ALLCOLORS) * len(ALLSHAPES) * 2 >= boardwidth * boardheight, "Board is too big for the number of shapes/colors defined."
 
 def main():
-    global FPSCLOCK, DISPLAY, boardwidth, boardheight, difficulty
+    global FPSCLOCK, DISPLAY, boardwidth, boardheight, difficulty, attemptsleft
     pygame.init()
     FPSCLOCK = pygame.time.Clock()
     DISPLAY = pygame.display.set_mode((WINDOWWIDTH, WINDOWHEIGHT))
+    font = pygame.font.Font('freesansbold.ttf', 20)
 
     mousex = 0 # x coord of mousedown
     mousey = 0 # y coord of mousedown
     pygame.display.set_caption('Memory Puzzle')
 
     boardwidth, boardheight = setBoardSize(difficulty)
+    attemptsleft = int((boardwidth * boardheight) / WRONG_GUESS_RATIO)
 
     mainBoard = getRandomizedBoard(boardwidth, boardheight)
     revealedBoxes = generateRevealedBoxesData(False)
@@ -105,7 +110,12 @@ def main():
     while True:
         mouseClicked = False
 
+        attempts_text_surf = font.render(f'You have {attemptsleft} wrong guesses left' if LIMITED_ATTEMPTS else '', True, (255,255,255), BGCOLOR)
+        attempts_text_rect = attempts_text_surf.get_rect()
+        attempts_text_rect.center = (155, 540)
+
         DISPLAY.fill(BGCOLOR) # draw the window
+        DISPLAY.blit(attempts_text_surf, attempts_text_rect)
         drawBoard(mainBoard, revealedBoxes)
 
         for event in pygame.event.get():
@@ -140,6 +150,33 @@ def main():
                             coverBoxesAnimation(mainBoard, [(firstSelection[0], firstSelection[1]), (boxx, boxy)])
                             revealedBoxes[firstSelection[0]][firstSelection[1]] = False
                             revealedBoxes[boxx][boxy] = False
+
+                            if LIMITED_ATTEMPTS:
+                                attemptsleft -= 1
+                                if attemptsleft == 0:
+                                    # we're done
+                                    attempts_text_surf = font.render(f'Game over...' if LIMITED_ATTEMPTS else '', True, (255,255,255), BGCOLOR)
+                                    DISPLAY.fill(BGCOLOR) # draw the window
+                                    DISPLAY.blit(attempts_text_surf, attempts_text_rect)
+                                    drawBoard(mainBoard, revealedBoxes)
+                                    pygame.display.update()
+                                    pygame.time.wait(2000)
+
+                                    # reset board
+                                    attemptsleft = int((boardwidth * boardheight) / WRONG_GUESS_RATIO)
+                                    mainBoard = getRandomizedBoard(boardwidth, boardheight)
+                                    revealedBoxes = generateRevealedBoxesData(False)
+
+                                    # show fully unrevealed board
+                                    attempts_text_surf = font.render(f'Re-randomizing...' if LIMITED_ATTEMPTS else '', True, (255,255,255), BGCOLOR)
+                                    DISPLAY.fill(BGCOLOR) # draw the window
+                                    DISPLAY.blit(attempts_text_surf, attempts_text_rect)
+                                    drawBoard(mainBoard, revealedBoxes)
+                                    pygame.display.update()
+                                    pygame.time.wait(1000)
+
+                                    # replay start game animation
+                                    startGameAnimation(mainBoard)
                         elif hasWon(revealedBoxes): # found all pairs?
                             gameWonAnimation(mainBoard)
                             pygame.time.wait(2000)
@@ -151,6 +188,7 @@ def main():
                                 boardwidth, boardheight = setBoardSize(difficulty)
 
                             # reset board
+                            attemptsleft = int((boardwidth * boardheight) / WRONG_GUESS_RATIO)
                             mainBoard = getRandomizedBoard(boardwidth, boardheight)
                             revealedBoxes = generateRevealedBoxesData(False)
 
@@ -319,8 +357,8 @@ def drawIcon(shape, color, boxx, boxy):
         pygame.draw.polygon(DISPLAY, color, ((left + half, top), (left + BOXSIZE - 1, top + half), (left + half, top + BOXSIZE - 1), (left, top + half)))
     elif shape == LINES:
         for i in range(0, BOXSIZE, 4):
-            pygame.draw.line(DISPLAY, color, (left, top + i), (left + i, top))
-            pygame.draw.line(DISPLAY, color, (left + i, top + BOXSIZE - 1), (left + BOXSIZE - 1, top + i))
+            pygame.draw.line(DISPLAY, color, (left, top + i), (left + i, top), 3)
+            pygame.draw.line(DISPLAY, color, (left + i, top + BOXSIZE - 1), (left + BOXSIZE - 1, top + i), 3)
     elif shape == OVAL:
         pygame.draw.ellipse(DISPLAY, color, (left, top + quarter, BOXSIZE, half))
     elif shape == HEXAGON:
@@ -328,10 +366,10 @@ def drawIcon(shape, color, boxx, boxy):
     elif shape == HOURGLASS:
         pygame.draw.polygon(DISPLAY, color, ((left + quarter, top + quarter), (left + 3*quarter, top + quarter), (left + quarter, top + 3*quarter), (left + 3*quarter, top + 3*quarter)))
     elif shape == SMILEY_FACE:
-        pygame.draw.line(DISPLAY, color, (left + quarter, top + tenth), (left + quarter, top + half))
-        pygame.draw.line(DISPLAY, color, (left + 3*quarter, top + tenth), (left + 3*quarter, top + half))
-        pygame.draw.line(DISPLAY, color, (left + quarter, top + 3*quarter), (left + half, top + BOXSIZE - tenth))
-        pygame.draw.line(DISPLAY, color, (left + 3*quarter, top + 3*quarter), (left + half, top + BOXSIZE - tenth))
+        pygame.draw.line(DISPLAY, color, (left + quarter, top + tenth), (left + quarter, top + half), 3)
+        pygame.draw.line(DISPLAY, color, (left + 3*quarter, top + tenth), (left + 3*quarter, top + half), 3)
+        pygame.draw.line(DISPLAY, color, (left + quarter, top + 3*quarter), (left + half, top + BOXSIZE - tenth), 3)
+        pygame.draw.line(DISPLAY, color, (left + 3*quarter, top + 3*quarter), (left + half, top + BOXSIZE - tenth), 3)
 
 def getShapeAndColor(board, boxx, boxy):
     """
