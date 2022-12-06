@@ -30,9 +30,9 @@ caty = 10
 direction = 'r'
 
 # setup text (text, bool for anti-alias, color and background)
-textSurfaceObj = fontObj.render('I\'m just some text', True, GREEN, BLUE)
-textRectObj = textSurfaceObj.get_rect()
-textRectObj.center = (200, 150)
+text_surfaceObj = fontObj.render('I\'m just some text', True, GREEN, BLUE)
+text_rectObj = text_surfaceObj.get_rect()
+text_rectObj.center = (200, 150)
 
 # setup audio
 soundObj.play()
@@ -75,7 +75,7 @@ while True:
             direction = 'r'
 
     DISPLAY.blit(catImg, (catx, caty))
-    DISPLAY.blit(textSurfaceObj, textRectObj) # later lines get layered above other objects
+    DISPLAY.blit(text_surfaceObj, text_rectObj) # later lines get layered above other objects
 
     # https://www.pygame.org/docs/ref/event.html
     for event in pygame.event.get():

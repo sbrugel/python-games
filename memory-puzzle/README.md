@@ -12,6 +12,8 @@ The player is presented with a board of boxes covering different icons (shapes o
 
 - Starting difficulty can be set to one of 7 presets
 - Difficulty scaling between rounds can be toggled; if you win a game, the board size increases in the next round
+- Limited attempts can be enabled; you only have a certain number of mistakes you can make before you lose the round and must start over
+- The color palette of the icons can be set to one of 3 presets
 
 ## Changes from original
 
