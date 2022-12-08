@@ -46,10 +46,10 @@ def main():
     info_rect.topleft = (10, WINDOW_HEIGHT - 25)
 
     # load the sound files
-    BEEP1 = pygame.mixer.Sound('assets/beep1.ogg')
-    BEEP2 = pygame.mixer.Sound('assets/beep2.ogg')
-    BEEP3 = pygame.mixer.Sound('assets/beep3.ogg')
-    BEEP4 = pygame.mixer.Sound('assets/beep4.ogg')
+    BEEP1 = pygame.mixer.Sound('assets/beep1.wav')
+    BEEP2 = pygame.mixer.Sound('assets/beep2.wav')
+    BEEP3 = pygame.mixer.Sound('assets/beep3.wav')
+    BEEP4 = pygame.mixer.Sound('assets/beep4.wav')
 
     # variables for a new round
     pattern = [] # the current pattern of colors

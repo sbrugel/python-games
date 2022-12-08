@@ -1,0 +1,23 @@
+{
+    "name": "Memory Puzzle",
+    "options": {
+        "opt1": {
+            "name": "Starting Board Size",
+            "type": "dropdown",
+            "options": ["4x4", "4x6", "6x6", "6x8", "8x8", "8x10", "10x10"]
+        },
+        "opt2": {
+            "name": "Difficulty Scaling",
+            "type": "toggle"
+        },
+        "opt3": {
+            "name": "Limited Attempts",
+            "type": "toggle"
+        },
+        "opt4": {
+            "name": "Color Palette",
+            "type": "dropdown",
+            "options": ["Default", "Warm Colors", "Cool Colors"]
+        }
+    }
+}
