@@ -19,5 +19,9 @@
             "type": "dropdown",
             "options": ["Default", "Warm Colors", "Cool Colors"]
         }
+    },
+    "colors": {
+        "foreground": "#ffffff",
+        "background": "#323232"
     }
 }

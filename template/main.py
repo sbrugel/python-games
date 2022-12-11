@@ -2,6 +2,7 @@
 # modified to include extra event listener demonstration
 
 import pygame, sys, time
+import os
 from pygame.locals import *
 
 # set up display & essentials
@@ -19,9 +20,11 @@ RED = (255, 0, 0)
 GREEN = (0, 255, 0)
 BLUE = (0, 0, 255)
 
-catImg = pygame.image.load('assets/cat.png')
+dir_path = os.path.dirname(os.path.realpath(__file__)) # the file currently being ran (mainmenu.py)
+
+catImg = pygame.image.load(dir_path + '/assets/cat.png')
 fontObj = pygame.font.Font('freesansbold.ttf', 32)
-soundObj = pygame.mixer.Sound('assets/tetrisb.wav') # only .wav supported, it seems
+soundObj = pygame.mixer.Sound(dir_path + '/assets/tetrisb.wav') # only .wav supported, it seems
 
 # game vars
 # setup cat
