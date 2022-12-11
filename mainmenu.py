@@ -2,6 +2,18 @@ from tkinter import *
 
 import json
 import os
+import threading
+
+class SystemCall(threading.Thread):
+    """
+    Runs the shell command specified in the 'command' parameter in a separate thread.
+    """
+    def __init__(self, command):
+        threading.Thread.__init__(self)
+        self.command = command
+ 
+    def run(self):
+        os.system(self.command)
 
 class Window():
     dir_path = os.path.dirname(os.path.realpath(__file__)) # the file currently being ran (mainmenu.py)
@@ -26,7 +38,6 @@ class Window():
                 self.metas.append(dir + '\\meta.json')
 
         # read the json files / add buttons for games
-        metas_loaded = 0
         for meta in self.metas:
             f = open(meta)
             data = json.load(f)
@@ -35,11 +46,10 @@ class Window():
 
             # we add a lambda (anon function) so it doesn't always run on start, only when clicked
             self.games.update({meta[:meta.find('meta.json')] + 'main.py': Button(self.root, text = data['name'], 
-                command = lambda n = meta[:meta.find('meta.json')] + 'main.py': os.system('python ' + n), 
+                command = lambda n = meta[:meta.find('meta.json')] + 'main.py': SystemCall('python ' + n).start(), 
                 bg = data['colors']['background'], 
                 fg = data['colors']['foreground'])})
             f.close()
-            metas_loaded += 1
 
         # add components (title and buttons) to win
         Label(self.root, text = 'Python Games', font = ("Arial 20 bold")).place(x = 10, y = 10)

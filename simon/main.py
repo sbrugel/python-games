@@ -1,4 +1,5 @@
 import random, sys, time, pygame
+import os
 from pygame.locals import *
 
 FPS = 30
@@ -45,11 +46,13 @@ def main():
     info_rect = info_surf.get_rect()
     info_rect.topleft = (10, WINDOW_HEIGHT - 25)
 
+    dir_path = os.path.dirname(os.path.realpath(__file__)) # the file currently being ran (mainmenu.py)
+
     # load the sound files
-    BEEP1 = pygame.mixer.Sound('assets/beep1.wav')
-    BEEP2 = pygame.mixer.Sound('assets/beep2.wav')
-    BEEP3 = pygame.mixer.Sound('assets/beep3.wav')
-    BEEP4 = pygame.mixer.Sound('assets/beep4.wav')
+    BEEP1 = pygame.mixer.Sound(dir_path + '/assets/beep1.wav')
+    BEEP2 = pygame.mixer.Sound(dir_path + '/assets/beep2.wav')
+    BEEP3 = pygame.mixer.Sound(dir_path + '/assets/beep3.wav')
+    BEEP4 = pygame.mixer.Sound(dir_path + '/assets/beep4.wav')
 
     # variables for a new round
     pattern = [] # the current pattern of colors
