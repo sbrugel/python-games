@@ -2,26 +2,12 @@ from tkinter import *
 
 import json
 import os
-import threading
-
-class SystemCall(threading.Thread):
-    """
-    Runs the shell command specified in the 'command' parameter in a separate thread.
-    """
-    def __init__(self, command):
-        threading.Thread.__init__(self)
-        self.command = command
- 
-    def run(self):
-        os.system(self.command)
+import systemcall
 
 class Window():
     dir_path = os.path.dirname(os.path.realpath(__file__)) # the file currently being ran (mainmenu.py)
     metas = []
-    games = {} # dictionary that maps game main.py filenames to button objects
-
-    def find_main_file(self, d):
-        print(d)
+    games = {} # dictionary that maps game folders to button objects
 
     def __init__(self):
         self.root = Tk()
@@ -45,8 +31,8 @@ class Window():
             assert 'name' in data and 'colors' in data, 'The following meta file is missing a required property: ' + meta
 
             # we add a lambda (anon function) so it doesn't always run on start, only when clicked
-            self.games.update({meta[:meta.find('meta.json')] + 'main.py': Button(self.root, text = data['name'], 
-                command = lambda n = meta[:meta.find('meta.json')] + 'main.py': SystemCall('python ' + n).start(), 
+            self.games.update({meta[:meta.find('meta.json')]: Button(self.root, text = data['name'], 
+                command = lambda n = meta[:meta.find('meta.json')]: systemcall.SystemCall('python optionsmenu.py ' + n).start(), 
                 bg = data['colors']['background'], 
                 fg = data['colors']['foreground'])})
             f.close()

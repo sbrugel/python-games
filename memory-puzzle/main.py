@@ -1,4 +1,4 @@
-import random, pygame, sys, math
+import random, pygame, sys, math, os
 from pygame.locals import *
 
 sys.argv = sys.argv[1:] # remove first arg, that's the file name
@@ -39,11 +39,14 @@ y_margin = int((WINDOW_HEIGHT - (board_height * (BOX_SIZE + GAP_SIZE))) / 2)
 difficulty = sys.argv[0] # (4x4, 4x6, 6x6, 6x8, 8x8, 8x10, 10x10) (can be changed during a game if difficulty scaling is true)
 DIFFICULTY_SCALING = False if sys.argv[1] == 0 else True
 LIMITED_ATTEMPTS = False if sys.argv[2] == 0 else True
-PALETTE_FILE = 'data/palettes/default.txt'
+
+dir_path = os.path.dirname(os.path.realpath(__file__)) # the file currently being ran (mainmenu.py)
+
+PALETTE_FILE = dir_path + '/data/palettes/default.txt'
 if sys.argv[3] == 1:
-    PALETTE_FILE = 'data/palettes/warmcolors.txt'
+    PALETTE_FILE = dir_path + '/data/palettes/warmcolors.txt'
 elif sys.argv[3] == 2:
-    PALETTE_FILE = 'data/palettes/coldcolors.txt'
+    PALETTE_FILE = dir_path + '/data/palettes/coldcolors.txt'
 
 f = open(PALETTE_FILE, "r") # open colors file for reading only
 lines = f.readlines()
