@@ -1,9 +1,25 @@
 import pygame, sys, random
 from pygame.locals import *
 
+sys.argv = sys.argv[1:] # remove first arg, that's the file name
+# assert len(sys.argv) == 6, 'There must be exactly 6 args supplied'
+
+# arguments from cmd
+# 0 = board size (0-2)
+# 1 = difficulty (moves to make when shuffling) (0-5)
+# 2 = difficulty scaling (0-1)
+# 3 = show moves when shuffling (0-1)
+# 4 = color of tiles
+# 5 = color of background
+
 # dimensions of the board
-BOARD_WIDTH = 4 # boxes
-BOARD_HEIGHT = 4 # boxes
+assert int(sys.argv[0]) >= 0 and int(sys.argv[0]) <= 2, 'Board size can only be 0 (3x3) to 2 (5x5)'
+BOARD_WIDTH = int(sys.argv[0]) + 3 # boxes
+BOARD_HEIGHT = int(sys.argv[0]) + 3 # boxes
+
+# num times to make random moves
+assert int(sys.argv[1]) >= 0 and int(sys.argv[1]) <= 5, 'Difficulty must be 0 - 5'
+RANDOM_MOVES = (15 * (int(sys.argv[1]) + 1)) - 5
 
 TILE_SIZE = 80
 WINDOW_WIDTH = 640
@@ -51,7 +67,7 @@ def main():
     NEW_SURF,   NEW_RECT   = make_text('New Game', TEXT_COLOR, TILE_COLOR, WINDOW_WIDTH - 120, WINDOW_HEIGHT - 60)
     SOLVE_SURF, SOLVE_RECT = make_text('Solve',    TEXT_COLOR, TILE_COLOR, WINDOW_WIDTH - 120, WINDOW_HEIGHT - 30)
 
-    main_board, solution_seq = generate_new_puzzle(80)
+    main_board, solution_seq = generate_new_puzzle(RANDOM_MOVES)
     SOLVED_BOARD = get_starting_board() # the solved board is just the starting board
     all_moves = [] # list of moves made from solved config
 
@@ -75,7 +91,7 @@ def main():
                         reset_animation(main_board, all_moves) # clicked on Reset button
                         all_moves = []
                     elif NEW_RECT.collidepoint(event.pos):
-                        main_board, solution_seq = generate_new_puzzle(80) # clicked on New Game button
+                        main_board, solution_seq = generate_new_puzzle(RANDOM_MOVES) # clicked on New Game button
                         all_moves = []
                     elif SOLVE_RECT.collidepoint(event.pos):
                         reset_animation(main_board, solution_seq + all_moves) # clicked on Solve button
