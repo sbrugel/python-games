@@ -19,7 +19,13 @@ BOARD_HEIGHT = int(sys.argv[0]) + 3 # boxes
 
 # num times to make random moves
 assert int(sys.argv[1]) >= 0 and int(sys.argv[1]) <= 5, 'Difficulty must be 0 - 5'
-RANDOM_MOVES = (15 * (int(sys.argv[1]) + 1)) - 5
+random_moves = (15 * (int(sys.argv[1]) + 1)) - 5
+
+# difficulty scaling
+DIFFICULTY_SCALING = False if int(sys.argv[2]) == 0 else True
+
+# show sliding
+SHOW_SLIDING = False if int(sys.argv[3]) == 0 else True
 
 TILE_SIZE = 80
 WINDOW_WIDTH = 640
@@ -54,7 +60,9 @@ LEFT = 'left'
 RIGHT = 'right'
 
 def main():
-    global FPSCLOCK, DISPLAY, BASIC_FONT, RESET_SURF, RESET_RECT, NEW_SURF, NEW_RECT, SOLVE_SURF, SOLVE_RECT
+    global FPSCLOCK, DISPLAY, BASIC_FONT, RESET_SURF, RESET_RECT, NEW_SURF, NEW_RECT, SOLVE_SURF, SOLVE_RECT, random_moves
+
+    solve_button_clicked = False
 
     pygame.init()
     FPSCLOCK = pygame.time.Clock()
@@ -67,7 +75,7 @@ def main():
     NEW_SURF,   NEW_RECT   = make_text('New Game', TEXT_COLOR, TILE_COLOR, WINDOW_WIDTH - 120, WINDOW_HEIGHT - 60)
     SOLVE_SURF, SOLVE_RECT = make_text('Solve',    TEXT_COLOR, TILE_COLOR, WINDOW_WIDTH - 120, WINDOW_HEIGHT - 30)
 
-    main_board, solution_seq = generate_new_puzzle(RANDOM_MOVES)
+    main_board, solution_seq = generate_new_puzzle(random_moves)
     SOLVED_BOARD = get_starting_board() # the solved board is just the starting board
     all_moves = [] # list of moves made from solved config
 
@@ -76,6 +84,9 @@ def main():
         msg = 'Click tile or press arrow keys to slide'
         if main_board == SOLVED_BOARD:
             msg = 'Solved!'
+            if not solve_button_clicked and DIFFICULTY_SCALING: # increase difficulty if user solved on their own
+                random_moves += 15
+                solve_button_clicked = True # loop will return here indefinitely, don't make it do that
 
         # repeatedly draw the intiial board first
         draw_board(main_board, msg)
@@ -91,9 +102,11 @@ def main():
                         reset_animation(main_board, all_moves) # clicked on Reset button
                         all_moves = []
                     elif NEW_RECT.collidepoint(event.pos):
-                        main_board, solution_seq = generate_new_puzzle(RANDOM_MOVES) # clicked on New Game button
+                        solve_button_clicked = False
+                        main_board, solution_seq = generate_new_puzzle(random_moves) # clicked on New Game button
                         all_moves = []
                     elif SOLVE_RECT.collidepoint(event.pos):
+                        solve_button_clicked = True
                         reset_animation(main_board, solution_seq + all_moves) # clicked on Solve button
                         all_moves = []
                 else:
@@ -421,7 +434,8 @@ def generate_new_puzzle(num_slides):
     last_move = None
     for i in range(num_slides):
         move = get_random_move(board, last_move)
-        slide_animation(board, move, 'Generating a new puzzle', animation_speed=int(TILE_SIZE / 3))
+        if SHOW_SLIDING:
+            slide_animation(board, move, 'Generating a new puzzle', animation_speed=int(TILE_SIZE / 3))
         make_move(board, move)
         sequence.append(move)
         last_move = move
