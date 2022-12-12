@@ -1,7 +1,27 @@
 {
     "name": "Slide Puzzle",
+    "options": {
+        "opt1": {
+            "name": "Starting Board Size",
+            "type": "dropdown",
+            "options": ["3x3", "4x4", "5x5"]
+        },
+        "opt2": {
+            "name": "Difficulty",
+            "type": "dropdown",
+            "options": ["Very Easy", "Easy", "Normal", "Hard", "Very Hard"]
+        },
+        "opt3": {
+            "name": "Difficulty Scaling",
+            "type": "toggle"
+        },
+        "opt4": {
+            "name": "Slide When Shuffling",
+            "type": "toggle"
+        }
+    },
     "colors": {
-        "foreground": "#ffffff",
-        "background": "#00cc00"
+        "foreground": "#00cc00",
+        "background": "#033649"
     }
 }

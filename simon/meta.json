@@ -1,7 +1,7 @@
 {
     "name": "Simon",
     "colors": {
-        "foreground": "#ffffff",
-        "background": "#0000ff"
+        "foreground": "#ff0000",
+        "background": "#000000"
     }
 }

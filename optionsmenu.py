@@ -11,16 +11,23 @@ class Window():
 
     def print_controls(self, controls):
         args = []
+        error = False
         for control in controls:
             if hasattr(control, 'current'):
                 # dropdown
-                print('dropdown has option index: ' + str(control.current()))
+                if control.current() == -1:
+                    error = True
+                    break
                 args.append(str(control.current()))
             else:
                 # checkbutton
                 print('checkbox is ' + ('enabled' if 'selected' in control.state() else 'disabled'))
                 args.append('1' if 'selected' in control.state() else '0')
 
+        if error:
+            print('An error occured. (will handle later)')
+            return
+            
         systemcall.SystemCall('python ' + self.game_folder + '\\main.py ' + " ".join(args)).start()
 
     def __init__(self):
