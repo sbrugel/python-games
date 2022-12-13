@@ -2,7 +2,7 @@ import pygame, sys, random
 from pygame.locals import *
 
 sys.argv = sys.argv[1:] # remove first arg, that's the file name
-# assert len(sys.argv) == 6, 'There must be exactly 6 args supplied'
+assert len(sys.argv) == 6, 'There must be exactly 6 args supplied'
 
 # arguments from cmd
 # 0 = board size (0-2)

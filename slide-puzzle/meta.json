@@ -4,12 +4,14 @@
         "opt1": {
             "name": "Starting Board Size",
             "type": "dropdown",
-            "options": ["3x3", "4x4", "5x5"]
+            "options": ["3x3", "4x4", "5x5"],
+            "defindex": 1
         },
         "opt2": {
             "name": "Difficulty",
             "type": "dropdown",
-            "options": ["Very Easy", "Easy", "Normal", "Hard", "Very Hard"]
+            "options": ["Very Easy", "Easy", "Normal", "Hard", "Very Hard"],
+            "defindex": 2
         },
         "opt3": {
             "name": "Difficulty Scaling",

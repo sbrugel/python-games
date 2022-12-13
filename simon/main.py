@@ -2,14 +2,26 @@ import random, sys, time, pygame
 import os
 from pygame.locals import *
 
-FPS = 30
-WINDOW_WIDTH = 640
-WINDOW_HEIGHT = 580
-FLASH_SPEED = 500 # ms
+sys.argv = sys.argv[1:] # remove first arg, that's the file name
+assert len(sys.argv) == 3, 'There must be exactly 3 args supplied'
+
+# arguments from cmd
+# 0 = squares to be added (0-2)
+# 1 = squares on board (0-1), 0 for 4, 1 for 6
+# 2 = timeout (0-3)
+
+FPS = 60
+FLASH_SPEED = 250 # ms
 FLASH_DELAY = 200 # ms
 BUTTON_SIZE = 200
 BUTTON_GAP_SIZE = 20
-TIMEOUT = 4 # seconds before game over, if no button pushed
+
+TIMEOUT = int(sys.argv[2]) + 1 # seconds before game over, if no button pushed
+ADD_SQUARES = int(sys.argv[0]) + 1 # number of new presses to add after each round
+SQUARES = 6 if int(sys.argv[1]) == 1 else 4
+
+WINDOW_WIDTH = 640 if SQUARES == 4 else 640 + BUTTON_SIZE
+WINDOW_HEIGHT = 580
 
 WHITE        = (255, 255, 255)
 BLACK        = (  0,   0,   0)
@@ -21,10 +33,14 @@ BRIGHTBLUE   = (  0,   0, 255)
 BLUE         = (  0,   0, 155)
 BRIGHTYELLOW = (255, 255,   0)
 YELLOW       = (155, 155,   0)
+BRIGHTTURQ   = (  0, 255, 255)
+TURQ         = (  0, 155, 155)
+BRIGHTPURP   = (255,   0, 255)
+PURP         = (155,   0, 155)
 DARKGRAY     = ( 40,  40,  40)
 bg_color = BLACK
 
-X_MARGIN = int((WINDOW_WIDTH - (2 * BUTTON_SIZE) - BUTTON_GAP_SIZE) / 2)
+X_MARGIN = int((640 - (2 * BUTTON_SIZE) - BUTTON_GAP_SIZE) / 2)
 Y_MARGIN = int((WINDOW_HEIGHT - (2 * BUTTON_SIZE) - BUTTON_GAP_SIZE) / 2)
 
 # button rectangles (collison regions for clicking events)
@@ -32,6 +48,8 @@ YELLOW_RECT = pygame.Rect(X_MARGIN, Y_MARGIN, BUTTON_SIZE, BUTTON_SIZE)
 BLUE_RECT = pygame.Rect(X_MARGIN + BUTTON_SIZE + BUTTON_GAP_SIZE, Y_MARGIN, BUTTON_SIZE, BUTTON_SIZE)
 RED_RECT = pygame.Rect(X_MARGIN, Y_MARGIN + BUTTON_SIZE + BUTTON_GAP_SIZE, BUTTON_SIZE, BUTTON_SIZE)
 GREEN_RECT = pygame.Rect(X_MARGIN + BUTTON_SIZE + BUTTON_GAP_SIZE, Y_MARGIN + BUTTON_SIZE + BUTTON_GAP_SIZE, BUTTON_SIZE, BUTTON_SIZE)
+TURQ_RECT = pygame.Rect(X_MARGIN + BUTTON_SIZE + BUTTON_GAP_SIZE + BUTTON_SIZE + BUTTON_GAP_SIZE, Y_MARGIN, BUTTON_SIZE, BUTTON_SIZE)
+PURP_RECT = pygame.Rect(X_MARGIN + BUTTON_SIZE + BUTTON_GAP_SIZE + BUTTON_SIZE + BUTTON_GAP_SIZE, Y_MARGIN + BUTTON_SIZE + BUTTON_GAP_SIZE, BUTTON_SIZE, BUTTON_SIZE)
 
 def main():
     global FPSCLOCK, DISPLAY, BASICFONT, BEEP1, BEEP2, BEEP3, BEEP4
@@ -42,7 +60,7 @@ def main():
     pygame.display.set_caption('Simon')
 
     BASICFONT = pygame.font.Font('freesansbold.ttf', 16)
-    info_surf = BASICFONT.render('Match the pattern by clicking on the button or using the Q, W, A, S keys.', 1, DARKGRAY)
+    info_surf = BASICFONT.render('Match the pattern by clicking on the button.', 1, DARKGRAY)
     info_rect = info_surf.get_rect()
     info_rect.topleft = (10, WINDOW_HEIGHT - 25)
 
@@ -80,21 +98,15 @@ def main():
             if event.type == MOUSEBUTTONDOWN:
                 mouse_x, mouse_y = event.pos
                 clicked_button = get_button_clicked(mouse_x, mouse_y)
-            elif event.type == KEYDOWN:
-                if event.key == K_q:
-                    clicked_button = YELLOW
-                elif event.key == K_w:
-                    clicked_button = BLUE
-                elif event.key == K_a:
-                    clicked_button = RED
-                elif event.key == K_s:
-                    clicked_button = GREEN
 
         if not waiting_for_input:
             # play pattern
             pygame.display.update()
             pygame.time.wait(1000)
-            pattern.append(random.choice((YELLOW, BLUE, RED, GREEN)))
+            choices = (YELLOW, BLUE, RED, GREEN) if SQUARES == 4 else (YELLOW, BLUE, RED, GREEN, TURQ, PURP)
+            for _ in range(ADD_SQUARES):
+                pattern.append(random.choice(choices))
+
             for button in pattern:
                 flash_button_animation(button)
                 pygame.time.wait(FLASH_DELAY)
@@ -170,6 +182,14 @@ def flash_button_animation(color, animation_speed=50):
         sound = BEEP4
         flash_color = BRIGHTGREEN
         rectangle = GREEN_RECT
+    elif color == TURQ:
+        sound = BEEP4
+        flash_color = BRIGHTTURQ
+        rectangle = TURQ_RECT
+    elif color == PURP:
+        sound = BEEP4
+        flash_color = BRIGHTPURP
+        rectangle = PURP_RECT
 
     orig_surf = DISPLAY.copy()
     flash_surf = pygame.Surface((BUTTON_SIZE, BUTTON_SIZE))
@@ -194,6 +214,9 @@ def draw_buttons():
     pygame.draw.rect(DISPLAY, BLUE,   BLUE_RECT)
     pygame.draw.rect(DISPLAY, RED,    RED_RECT)
     pygame.draw.rect(DISPLAY, GREEN,  GREEN_RECT)
+    if SQUARES > 4:
+        pygame.draw.rect(DISPLAY, TURQ,   TURQ_RECT)
+        pygame.draw.rect(DISPLAY, PURP,   PURP_RECT)
 
 def change_background_animation(animation_speed=40):
     """
@@ -268,6 +291,10 @@ def get_button_clicked(x, y):
         return RED
     elif GREEN_RECT.collidepoint((x, y)):
         return GREEN
+    elif TURQ_RECT.collidepoint((x, y)):
+        return TURQ
+    elif PURP_RECT.collidepoint((x, y)):
+        return PURP
     return None
 
 main()

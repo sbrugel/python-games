@@ -33,6 +33,7 @@ class Window():
 
         width = 350
         height = 100
+        last_option_height = 0
         if 'options' in data:
             # add all options to the screen
             for i in range(1, len(data['options']) + 1):
@@ -46,7 +47,7 @@ class Window():
                     cbox = ttk.Combobox(self.root, width = 20, values = opt['options'])
                     cbox.place(x = 200, y = 20 + i * 30)
                     self.controls.append(cbox)
-                    self.controls[i - 1].set(opt['options'][0])
+                    self.controls[i - 1].set(opt['options'][opt['defindex'] if 'defindex' in opt else 0])
                 elif opt['type'] == 'toggle':
                     style = ttk.Style()
                     style.configure("TCheckbutton", background = data['colors']['background'])
@@ -61,11 +62,13 @@ class Window():
                     self.controls.append(cbox)
 
                 self.ctypes.append(opt['type'])
+                last_option_height = 20 + i * 30
 
-            height = (len(data['options']) + 1) * 42
+            height = last_option_height + 30
 
         Label(self.root, text = data['name'], font = ("Arial 20 bold"), fg = data['colors']['foreground'], bg = data['colors']['background']).place(x = 10, y = 10)
-        Button(self.root, text = 'Go', command = lambda: self.print_controls(self.controls)).place(x = 15, y = height - 40)
+        Button(self.root, text = 'Go', command = lambda: self.print_controls(self.controls)).place(x = 15, y = last_option_height + 30)
+        height += 40
         
         self.root.title(data['name'] + ' Options')
         self.root.configure(bg = data['colors']['background'])

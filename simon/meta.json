@@ -1,5 +1,23 @@
 {
     "name": "Simon",
+    "options": {
+        "opt1": {
+            "name": "Memorization Difficulty",
+            "type": "dropdown",
+            "options": ["Easy", "Medium", "Hard"]
+        },
+        "opt2": {
+            "name": "Squares on Board",
+            "type": "dropdown",
+            "options": ["4", "6"]
+        },
+        "opt3": {
+            "name": "Timeout",
+            "type": "dropdown",
+            "options": ["1 sec", "2 sec", "3 sec", "4 sec"],
+            "defindex": 3
+        }
+    },
     "colors": {
         "foreground": "#ff0000",
         "background": "#000000"
