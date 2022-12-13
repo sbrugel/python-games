@@ -14,3 +14,4 @@ A main menu is included, where one can launch any of the completed games in this
 
 - [Pygame Template](https://github.com/sbrugel/python-games/tree/master/template): A very basic app that demonstrates the fundamental aspects of Pygame.
 - [Memory Puzzle](https://github.com/sbrugel/python-games/tree/master/memory-puzzle): The player is presented with a 4x4 to 10x10 board of boxes covering icons of different shapes and colors. The player must match all pairs of icons to win. Different difficulty modes, color palettes for icons, and a toggle for limited attempts are available.
+- [Slide Puzzle](https://github.com/sbrugel/python-games/tree/master/slide-puzzle): On a square board that has number boxes in all spaces except one, the player must slide tiles around until the boxes are in numerical order.

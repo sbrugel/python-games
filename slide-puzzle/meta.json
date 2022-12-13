@@ -18,6 +18,16 @@
         "opt4": {
             "name": "Slide When Shuffling",
             "type": "toggle"
+        },
+        "opt5": {
+            "name": "Tile Color",
+            "type": "color",
+            "default": "#00cc00"
+        },
+        "opt6": {
+            "name": "Background Color",
+            "type": "color",
+            "default": "#033649"
         }
     },
     "colors": {

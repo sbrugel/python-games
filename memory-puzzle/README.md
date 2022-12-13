@@ -26,3 +26,5 @@ The player is presented with a board of boxes covering different icons (shapes o
 - [Change] Window size slight increase
 - [Fix] Window no longer freezes when revealing box contents after a game is won
 - [Docs] Function documentation and additional comments added
+
+![image](https://i.imgur.com/W6Qyb7J.gif)

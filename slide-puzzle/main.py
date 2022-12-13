@@ -9,8 +9,8 @@ sys.argv = sys.argv[1:] # remove first arg, that's the file name
 # 1 = difficulty (moves to make when shuffling) (0-5)
 # 2 = difficulty scaling (0-1)
 # 3 = show moves when shuffling (0-1)
-# 4 = color of tiles
-# 5 = color of background
+# 4 = color of tiles (hex)
+# 5 = color of background (hex)
 
 # dimensions of the board
 assert int(sys.argv[0]) >= 0 and int(sys.argv[0]) <= 2, 'Board size can only be 0 (3x3) to 2 (5x5)'
@@ -40,14 +40,14 @@ DARKTURQUOISE = (  3,  54,  73)
 GREEN =         (  0, 204,   0)
 
 # constant colors
-BGCOLOR = DARKTURQUOISE
+BGCOLOR = sys.argv[5]
 BASIC_FONT_SIZE = 20
 BUTTON_COLOR = WHITE
 BUTTON_TEXT_COLOR = BLACK
 MESSAGE_COLOR = WHITE
 
 # potentially modifiable colors
-TILE_COLOR = GREEN
+TILE_COLOR = sys.argv[4]
 TEXT_COLOR = WHITE
 BORDER_COLOR = BRIGHTBLUE
 
