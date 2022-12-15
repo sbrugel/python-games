@@ -1,5 +1,30 @@
 {
     "name": "Snake",
+    "options": {
+        "opt1": {
+            "name": "Length Increase",
+            "type": "dropdown",
+            "options": ["1", "2", "3"]
+        },
+        "opt2": {
+            "name": "Turbo Mode",
+            "type": "toggle"
+        },
+        "opt3": {
+            "name": "Disappearing Fruits",
+            "type": "toggle"
+        },
+        "opt4": {
+            "name": "Snake Color",
+            "type": "color",
+            "default": "#00ff00"
+        },
+        "opt5": {
+            "name": "Fruit Color",
+            "type": "color",
+            "default": "#ff0000"
+        }
+    },
     "colors": {
         "foreground": "#00ff00",
         "background": "#000000"

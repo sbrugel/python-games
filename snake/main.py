@@ -1,7 +1,20 @@
 import random, pygame, sys
 from pygame.locals import *
 
-FPS = 15
+sys.argv = sys.argv[1:] # remove first arg, that's the file name
+# assert len(sys.argv) == 3, 'There must be exactly 3 args supplied'
+
+# arguments from cmd
+# 0 = length increase for each fruit (0-2)
+# 1 = game speed (0-1), 0 for normal, 1 for fast
+# 2 = disappearing food (0-1)
+# 3 = snake color (hex)
+# 4 = fruit color (hex)
+
+LENGTH_INCREASE = int(sys.argv[0]) # + 1 = snake bits added per fruit
+DEFAULT_LIFE = 45 if int(sys.argv[2]) == 1 else -1
+
+FPS = 25 if int(sys.argv[1]) == 1 else 15
 WINDOW_WIDTH = 640
 WINDOW_HEIGHT = 480
 CELL_SIZE = 20
@@ -10,13 +23,12 @@ assert WINDOW_HEIGHT % CELL_SIZE == 0, "Window height must be a multiple of cell
 CELL_WIDTH = int(WINDOW_WIDTH / CELL_SIZE)
 CELL_HEIGHT = int(WINDOW_HEIGHT / CELL_SIZE)
 
-WHITE     = (255, 255, 255)
-BLACK     = (  0,   0,   0)
-RED       = (255,   0,   0)
-GREEN     = (  0, 255,   0)
-DARKGREEN = (  0, 155,   0)
-DARKGRAY  = ( 40,  40,  40)
-BGCOLOR = BLACK
+WHITE          = (255, 255, 255)
+BLACK          = (  0,   0,   0)
+DARKGRAY       = ( 40,  40,  40)
+BGCOLOR        = BLACK
+FRUITCOLOR     = sys.argv[4]
+SNAKECOLOR     = sys.argv[3]
 
 UP = 'up'
 DOWN = 'down'
@@ -46,10 +58,21 @@ def run_game():
     """
     # starting variables
     # set random starter point - 6 pixels from edges to give player time to actually move around
-    start_x = random.randint(5, CELL_WIDTH - 6)
-    start_y = random.randint(5, CELL_HEIGHT - 6)
-    snake_coords = [{'x': start_x, 'y': start_y}, {'x': start_x - 1, 'y': start_y}, {'x': start_x - 2, 'y': start_y}]
-    direction = RIGHT
+    start_x = random.randint(5, CELL_WIDTH - 1)
+    start_y = random.randint(5, CELL_HEIGHT - 1)
+    direction = RIGHT if start_x < CELL_WIDTH / 2 else LEFT
+    if direction == RIGHT:
+        snake_coords = [{'x': start_x, 'y': start_y}, {'x': start_x - 1, 'y': start_y}, {'x': start_x - 2, 'y': start_y}]
+    else:
+        snake_coords = [{'x': start_x -2 , 'y': start_y}, {'x': start_x - 1, 'y': start_y}, {'x': start_x, 'y': start_y}]
+    score = 0
+
+    # if fruit disappearing is turned on:
+    fruit_life = DEFAULT_LIFE # how long each fruit stays on the board, measured in frames
+    fruits_left = 3 if fruit_life != -1 else -1 # how many fruits can be missed
+
+    # tracks number of snake pieces to add
+    outstanding_parts = 0
 
     # put apple in random place
     apple = get_random_location() # 'apple' var is the LOCATION of the apple
@@ -81,10 +104,17 @@ def run_game():
 
         # eaten a fruit?
         if apple['x'] == snake_coords[HEAD]['x'] and apple['y'] == snake_coords[HEAD]['y']:
-            # do not remove snake tail segment
+            # do not remove snake tail segment, possibly even add one or two extra depending on settings
             apple = get_random_location()
+            outstanding_parts = LENGTH_INCREASE
+            if fruit_life != -1:
+                fruit_life = DEFAULT_LIFE
+            score += 1
         else:
-            del snake_coords[-1] # remove a tail segment; if we don't do this the end will simply stick and snake will extend by one piece
+            if outstanding_parts == 0:
+                del snake_coords[-1] # remove a tail segment; if we don't do this the end will simply stick and snake will extend by one piece
+            else:
+                outstanding_parts -= 1 # don't remove if we still need to add segments!
 
         # "move" snake by adding segment in direction of movement
         if direction == UP:
@@ -98,12 +128,22 @@ def run_game():
 
         snake_coords.insert(0, new_head)
 
+        fruit_life -= 1
+
+        if fruit_life == 0: # fruit disappearing (if enabled), move it elsewhere and subtract a life
+            fruits_left -= 1
+            fruit_life = DEFAULT_LIFE
+            apple = get_random_location()
+
+        if fruits_left == 0:
+            return # game over, all lives gone!
+
         # draw things in this order
         DISPLAY.fill(BGCOLOR)
         draw_grid()
         draw_snake(snake_coords)
-        draw_apple(apple)
-        draw_score(len(snake_coords) - 3)
+        draw_apple(apple, fruit_life)
+        draw_score(score, fruits_left)
         pygame.display.update()
         FPSCLOCK.tick(FPS)       
 
@@ -135,8 +175,8 @@ def show_start_screen():
     Indefinitely shows the start screen until a key is pressed, in which case either the game starts or closes (Esc)
     """
     title_font = pygame.font.Font('freesansbold.ttf', 100)
-    title_surf_1 = title_font.render('Snake', True, WHITE, DARKGREEN)
-    title_surf_2 = title_font.render('Snake', True, GREEN)
+    title_surf_1 = title_font.render('Snake', True, WHITE)
+    title_surf_2 = title_font.render('Snake', True, SNAKECOLOR)
     
     degrees1 = 0 # angle of 1st surf
     degrees2 = 0
@@ -202,7 +242,7 @@ def show_game_over_screen():
             pygame.event.get() # clear event queue
             return
 
-def draw_score(score):
+def draw_score(score, fruits_left):
     """
     Displays the score on the top right of the screen
 
@@ -213,6 +253,12 @@ def draw_score(score):
     score_rect = score_surf.get_rect()
     score_rect.topleft = (WINDOW_WIDTH - 120, 10)
     DISPLAY.blit(score_surf, score_rect)
+
+    if fruits_left != -1:
+        fruits_surf = BASICFONT.render('Lives: %s' % (fruits_left), True, WHITE)
+        fruits_rect = fruits_surf.get_rect()
+        fruits_rect.topleft = (WINDOW_WIDTH - 120, 30)
+        DISPLAY.blit(fruits_surf, fruits_rect)
 
 def draw_snake(snake_coords):
     """
@@ -225,11 +271,9 @@ def draw_snake(snake_coords):
         x = coord['x'] * CELL_SIZE
         y = coord['y'] * CELL_SIZE
         snake_segment_rect = pygame.Rect(x, y, CELL_SIZE, CELL_SIZE)
-        pygame.draw.rect(DISPLAY, DARKGREEN, snake_segment_rect)
-        snake_inner_segment_rect = pygame.Rect(x + 4, y + 4, CELL_SIZE - 8, CELL_SIZE - 8)
-        pygame.draw.rect(DISPLAY, GREEN, snake_inner_segment_rect)
+        pygame.draw.rect(DISPLAY, SNAKECOLOR, snake_segment_rect)
 
-def draw_apple(coord):
+def draw_apple(coord, life):
     """
     Draws the apple on the board
 
@@ -239,7 +283,7 @@ def draw_apple(coord):
     x = coord['x'] * CELL_SIZE
     y = coord['y'] * CELL_SIZE
     apple_rect = pygame.Rect(x, y, CELL_SIZE, CELL_SIZE)
-    pygame.draw.rect(DISPLAY, RED, apple_rect)
+    pygame.draw.rect(DISPLAY, FRUITCOLOR if life > 15 or life < 1 else WHITE, apple_rect)
 
 def draw_grid():
     """

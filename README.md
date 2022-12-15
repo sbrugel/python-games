@@ -10,16 +10,21 @@ More info for each game in the READMEs of each folder.
 
 One core feature about this project is the dynamic main menu to pick games to play - a GUI made in Tkinter, game buttons are automatically added to the window based on the prescence of `meta.json` files in each game folder. That way, I don't have to manually modify the main menu code to add each game.
 
-Another, arguably bigger, feature is a dynamic options menu. You may have noticed in the root of this repo, there is a file called `optionsmenu.py`. This is a dynamic Tkinter GUI that displays the options of the game you select from the main menu, based on what is stored in that game's `meta.json` file. It supports several different input types, including dropdowns, checkboxes, and color pickers. This makes it so I don't have to make an options menu for every individual game, all I need to do is put the game options in the game's meta file. Talk about spending a bit too much time on automation :)
+Another, arguably bigger, feature is a dynamic options menu. You may have noticed in the root of this repo, there is a file called `optionsmenu.py`. This is a dynamic Tkinter GUI that displays the options of the game you select from the main menu, based on what is stored in that game's `meta.json` file. It supports several different input types, including dropdowns, checkboxes, and color pickers. This makes it so I don't have to make an options menu for every individual game, all I need to do is put the game options in the game's meta file. Talk about spending a bit too much time on automation :) See below for a couple examples.
+
+![img](https://i.imgur.com/mjEo5gn.png)
+
+![img](https://i.imgur.com/e3aUNmq.png)
 
 ## List of Games
 ### Original
 TBA
 
 ### Recreated / Remixed
-- [Memory Puzzle](https://github.com/sbrugel/python-games/tree/master/memory-puzzle): The player is presented with a 4x4 to 10x10 board of boxes covering icons of different shapes and colors. The player must match all pairs of icons to win. Different difficulty modes, color palettes for icons, and a toggle for limited attempts are available.
+- [Memory Puzzle](https://github.com/sbrugel/python-games/tree/master/memory-puzzle): The player is presented with a 4x4 to 10x10 board of boxes covering icons of different shapes and colors. The player must match all pairs of icons to win.
 - [Slide Puzzle](https://github.com/sbrugel/python-games/tree/master/slide-puzzle): On a square board that has number boxes in all spaces except one, the player must slide tiles around until the boxes are in numerical order.
 - [Simon](https://github.com/sbrugel/python-games/tree/master/simon): The player must mimic a pattern given to them by clicking colored buttons in order. Each time the pattern is correctly simulated, the pattern length increases. The goal is to keep this pattern going for as long as possible.
+- [Snake](https://github.com/sbrugel/python-games/tree/master/snake): The player controls the direction of a snake on a board, aiming for fruits to increase their score and the snake's length. The goal of the game is to go as long as possible before the snake either runs into itself or into an edge.
 
 ### Misc
 - [Pygame Template](https://github.com/sbrugel/python-games/tree/master/template): A very basic app that demonstrates the fundamental aspects of Pygame.
