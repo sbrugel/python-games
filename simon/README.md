@@ -1,6 +1,6 @@
 # Simon
 
-Originally done by Al Sweigart, this is a Pygame adaptation of the classic slide puzzle game.
+Originally done by Al Sweigart, this is a Pygame adaptation of Simon, a memory game.
 
 There are 4 or 6 colored buttons on the screen which light in a certain, random pattern. The player must mimic this pattern by clicking the buttons in order. Each time the pattern is correctly simulated, the pattern length increases. The game is lost if the player either misclicks a button that is not in the pattern or if they wait for too long before selecting another button in the pattern.
 

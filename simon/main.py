@@ -52,7 +52,7 @@ TURQ_RECT = pygame.Rect(X_MARGIN + BUTTON_SIZE + BUTTON_GAP_SIZE + BUTTON_SIZE +
 PURP_RECT = pygame.Rect(X_MARGIN + BUTTON_SIZE + BUTTON_GAP_SIZE + BUTTON_SIZE + BUTTON_GAP_SIZE, Y_MARGIN + BUTTON_SIZE + BUTTON_GAP_SIZE, BUTTON_SIZE, BUTTON_SIZE)
 
 def main():
-    global FPSCLOCK, DISPLAY, BASICFONT, BEEP1, BEEP2, BEEP3, BEEP4
+    global FPSCLOCK, DISPLAY, BASICFONT, BEEP1, BEEP2, BEEP3, BEEP4, BEEP5, BEEP6
 
     pygame.init()
     FPSCLOCK = pygame.time.Clock()
@@ -71,6 +71,8 @@ def main():
     BEEP2 = pygame.mixer.Sound(dir_path + '/assets/beep2.wav')
     BEEP3 = pygame.mixer.Sound(dir_path + '/assets/beep3.wav')
     BEEP4 = pygame.mixer.Sound(dir_path + '/assets/beep4.wav')
+    BEEP5 = pygame.mixer.Sound(dir_path + '/assets/beep5.wav')
+    BEEP6 = pygame.mixer.Sound(dir_path + '/assets/beep6.wav')
 
     # variables for a new round
     pattern = [] # the current pattern of colors
@@ -183,11 +185,11 @@ def flash_button_animation(color, animation_speed=50):
         flash_color = BRIGHTGREEN
         rectangle = GREEN_RECT
     elif color == TURQ:
-        sound = BEEP4
+        sound = BEEP5
         flash_color = BRIGHTTURQ
         rectangle = TURQ_RECT
     elif color == PURP:
-        sound = BEEP4
+        sound = BEEP6
         flash_color = BRIGHTPURP
         rectangle = PURP_RECT
 

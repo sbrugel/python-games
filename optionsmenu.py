@@ -12,6 +12,7 @@ class Window():
 
     def print_controls(self, controls):
         args = []
+
         for i in range (len(self.controls)):
             if self.ctypes[i] == 'dropdown':
                 args.append(str(controls[i].current()))
@@ -34,6 +35,7 @@ class Window():
         width = 350
         height = 100
         last_option_height = 0
+
         if 'options' in data:
             # add all options to the screen
             for i in range(1, len(data['options']) + 1):
@@ -43,6 +45,7 @@ class Window():
                 assert opt['type'] == 'dropdown' or opt['type'] == 'toggle' or opt['type'] == 'color', 'Invalid option type in this meta file > ' + opt['type']
 
                 Label(self.root, text = opt['name'], font = ("Arial 12"), fg = data['colors']['foreground'], bg = data['colors']['background']).place(x = 10, y = 20 + i * 30)
+
                 if opt['type'] == 'dropdown':
                     cbox = ttk.Combobox(self.root, width = 20, values = opt['options'])
                     cbox.place(x = 200, y = 20 + i * 30)
@@ -67,8 +70,10 @@ class Window():
             height = last_option_height + 30
 
         Label(self.root, text = data['name'], font = ("Arial 20 bold"), fg = data['colors']['foreground'], bg = data['colors']['background']).place(x = 10, y = 10)
-        Button(self.root, text = 'Go', command = lambda: self.print_controls(self.controls)).place(x = 15, y = last_option_height + 30)
         height += 40
+        if last_option_height == 0:
+            last_option_height = 40
+        Button(self.root, text = 'Go', command = lambda: self.print_controls(self.controls)).place(x = 15, y = last_option_height + 30)
         
         self.root.title(data['name'] + ' Options')
         self.root.configure(bg = data['colors']['background'])

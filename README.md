@@ -2,7 +2,7 @@
 
 A few games I made/re-created in Python, using PyGame (primarily).
 
-Some of these games were originally created by Al Sweigart from his _Making Games with Python & Pygame_ book, but were modified by myself in one or more ways (features-wise). The code for those games is distributed/modified under the [CC BY-NC-SA 3.0 US](https://creativecommons.org/licenses/by-nc-sa/3.0/us/) license.
+Some of these games were originally created by Al Sweigart from his _Making Games with Python & Pygame_ book, but were modified by myself in one or more ways to add new features or change existing ones. The code for those games is distributed/modified under the [CC BY-NC-SA 3.0 US](https://creativecommons.org/licenses/by-nc-sa/3.0/us/) license.
 
 More info for each game in the READMEs of each folder.
 
@@ -13,10 +13,16 @@ One core feature about this project is the dynamic main menu to pick games to pl
 Another, arguably bigger, feature is a dynamic options menu. You may have noticed in the root of this repo, there is a file called `optionsmenu.py`. This is a dynamic Tkinter GUI that displays the options of the game you select from the main menu, based on what is stored in that game's `meta.json` file. It supports several different input types, including dropdowns, checkboxes, and color pickers. This makes it so I don't have to make an options menu for every individual game, all I need to do is put the game options in the game's meta file. Talk about spending a bit too much time on automation :)
 
 ## List of Games
+### Original
+TBA
 
-- [Pygame Template](https://github.com/sbrugel/python-games/tree/master/template): A very basic app that demonstrates the fundamental aspects of Pygame.
+### Recreated / Remixed
 - [Memory Puzzle](https://github.com/sbrugel/python-games/tree/master/memory-puzzle): The player is presented with a 4x4 to 10x10 board of boxes covering icons of different shapes and colors. The player must match all pairs of icons to win. Different difficulty modes, color palettes for icons, and a toggle for limited attempts are available.
 - [Slide Puzzle](https://github.com/sbrugel/python-games/tree/master/slide-puzzle): On a square board that has number boxes in all spaces except one, the player must slide tiles around until the boxes are in numerical order.
+- [Simon](https://github.com/sbrugel/python-games/tree/master/simon): The player must mimic a pattern given to them by clicking colored buttons in order. Each time the pattern is correctly simulated, the pattern length increases. The goal is to keep this pattern going for as long as possible.
+
+### Misc
+- [Pygame Template](https://github.com/sbrugel/python-games/tree/master/template): A very basic app that demonstrates the fundamental aspects of Pygame.
 
 ## Meta File Notes
 
