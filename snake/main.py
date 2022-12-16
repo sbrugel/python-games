@@ -2,7 +2,7 @@ import random, pygame, sys
 from pygame.locals import *
 
 sys.argv = sys.argv[1:] # remove first arg, that's the file name
-# assert len(sys.argv) == 3, 'There must be exactly 3 args supplied'
+assert len(sys.argv) == 5, 'There must be exactly 5 args supplied'
 
 # arguments from cmd
 # 0 = length increase for each fruit (0-2)

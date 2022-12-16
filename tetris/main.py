@@ -1,14 +1,39 @@
 import random, time, pygame, os, sys
 from pygame.locals import *
 
+sys.argv = sys.argv[1:] # remove first arg, that's the file name
+assert len(sys.argv) == 3, 'There must be exactly 3 args supplied'
+
+# arguments from cmd
+# 0 = show ghost pieces (0-1)
+# 1 = board size (0-2), normal/small/smaller
+# 2 = game speed (0-2), normal/fast/faster
+
 FPS = 25
 WINDOW_WIDTH = 640
 WINDOW_HEIGHT = 480
 BOX_SIZE = 20
 BOARD_WIDTH = 10
-BOARD_HEIGHT = 20
+
+HIDE_GHOSTS = int(sys.argv[0])
+
+if int(sys.argv[1]) == 0:
+    BOARD_HEIGHT = 20
+elif int(sys.argv[1]) == 1:
+    BOARD_HEIGHT = 15
+else:
+    BOARD_HEIGHT = 10
+
+if int(sys.argv[2]) == 0:
+    BASE_FALL_FREQ = 0.02
+elif int(sys.argv[2]) == 1:
+    BASE_FALL_FREQ = 0.03
+else:
+    BASE_FALL_FREQ = 0.04
+
 BLANK = '.'
 
+# timeout for moving pieces manually
 MOVE_SIDEWAYS_FREQ = 0.15
 MOVE_DOWN_FREQ = 0.1
 
@@ -288,6 +313,8 @@ def run_game():
         draw_status(score, level)
         draw_next_piece(next_piece)
         if falling_piece != None:
+            if not HIDE_GHOSTS:
+                draw_piece(get_ghost_piece(board, falling_piece))
             draw_piece(falling_piece)
 
         pygame.display.update()
@@ -348,8 +375,8 @@ def calculate_level_and_fall_freq(score):
     """
     Based on current score, return the level the player is on, and how many seconds pass until a piece falls down one space
     """
-    level = int(score / 10) + 1
-    fall_freq = 0.27 - (level * 0.02)
+    level = int(score / 5) + 1
+    fall_freq = 0.27 - (level * BASE_FALL_FREQ)
     return level, fall_freq
 
 def get_new_piece():
@@ -363,6 +390,24 @@ def get_new_piece():
                 'y': -2, # start it above the board (i.e. less than 0)
                 'color': random.randint(0, len(COLORS)-1)}
     return new_piece
+
+def get_ghost_piece(board, piece):
+    """
+    Get the "preview" of the current piece. That is, how far down the piece can go given its current x position. This makes it easier for the player to properly
+    align their current piece
+    """
+    ghost_piece = {'shape': piece['shape'],
+                    'rotation': piece['rotation'],
+                    'x': piece['x'],
+                    'y': piece['y'],
+                    'color': GRAY}
+    # find the lowest possible y value without colliding into other pieces or the ground
+    while True:
+        ghost_piece['y'] += 1
+        if not is_valid_position(board, ghost_piece):
+            ghost_piece['y'] -= 1
+            break
+    return ghost_piece
 
 def add_to_board(board, piece):
     """
@@ -448,8 +493,12 @@ def draw_box(boxx, boxy, color, pixelx=None, pixely=None):
         return
     if pixelx == None and pixely == None:
         pixelx, pixely = convert_to_pixel_coords(boxx, boxy)
-    pygame.draw.rect(DISPLAY, COLORS[color], (pixelx + 1, pixely + 1, BOX_SIZE - 1, BOX_SIZE - 1))
-    pygame.draw.rect(DISPLAY, LIGHTCOLORS[color], (pixelx + 1, pixely + 1, BOX_SIZE - 4, BOX_SIZE - 4))
+    
+    if color != GRAY: # ordinary piece, where color is an index of the colors array
+        pygame.draw.rect(DISPLAY, COLORS[color], (pixelx + 1, pixely + 1, BOX_SIZE - 1, BOX_SIZE - 1))
+        pygame.draw.rect(DISPLAY, LIGHTCOLORS[color], (pixelx + 1, pixely + 1, BOX_SIZE - 4, BOX_SIZE - 4))
+    else: # ghost piece, color is explicitly passed in
+        pygame.draw.rect(DISPLAY, color, (pixelx + 1, pixely + 1, BOX_SIZE - 1, BOX_SIZE - 1))
 
 def draw_board(board):
     """

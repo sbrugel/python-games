@@ -1,5 +1,21 @@
 {
     "name": "Tetris",
+    "options": {
+        "opt1": {
+            "name": "Disable Ghost Pieces",
+            "type": "toggle"
+        },
+        "opt2": {
+            "name": "Board Size",
+            "type": "dropdown",
+            "options": ["Normal", "Small", "Smaller"]
+        },
+        "opt3": {
+            "name": "Falling Speed",
+            "type": "dropdown",
+            "options": ["Normal", "Fast", "Faster"]
+        }
+    },
     "colors": {
         "foreground": "#9b9b00",
         "background": "#000000"
