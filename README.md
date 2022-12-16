@@ -25,6 +25,7 @@ TBA
 - [Slide Puzzle](https://github.com/sbrugel/python-games/tree/master/slide-puzzle): On a square board that has number boxes in all spaces except one, the player must slide tiles around until the boxes are in numerical order.
 - [Simon](https://github.com/sbrugel/python-games/tree/master/simon): The player must mimic a pattern given to them by clicking colored buttons in order. Each time the pattern is correctly simulated, the pattern length increases. The goal is to keep this pattern going for as long as possible.
 - [Snake](https://github.com/sbrugel/python-games/tree/master/snake): The player controls the direction of a snake on a board, aiming for fruits to increase their score and the snake's length. The goal of the game is to go as long as possible before the snake either runs into itself or into an edge.
+- [Tetris](https://github.com/sbrugel/python-games/tree/master/tetris): The player must guide falling blocks down to form rows filled with boxes, void of any gaps. When a complete row is formed, it is cleared and each row above moves down one row. The goal is to complete as many of these lines as possible until the screen fills up.
 
 ### Misc
 - [Pygame Template](https://github.com/sbrugel/python-games/tree/master/template): A very basic app that demonstrates the fundamental aspects of Pygame.
