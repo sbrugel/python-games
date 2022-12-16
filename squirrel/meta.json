@@ -1,5 +1,19 @@
 {
-    "name": "Squirrel Survival",
+    "name": "Squirrel Game",
+    "options": {
+        "opt1": {
+            "name": "Survival Mode",
+            "type": "toggle"
+        },
+        "opt2": {
+            "name": "Bigger Squirrels",
+            "type": "toggle"
+        },
+        "opt3": {
+            "name": "Hardcore Mode",
+            "type": "toggle"
+        }
+    },
     "colors": {
         "background": "#CE8102",
         "foreground": "#18ff00"
