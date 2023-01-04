@@ -14,16 +14,16 @@ BG_COLOR = WHITE
 LINE_COLOR = BLACK
 X_COLOR = RED
 O_COLOR = BLUE
-SLEEP_TIME = 0
+SLEEP_TIME = 500
 
 X = 'x' # moves first
 O = 'o'
 P1 = X # the piece player 1 has
 P2 = O # the piece player 2 has
 P2_CPU = False # is player 2 a computer player or not?
-current_turn = P1 # who is currently playing
+current_turn = P1 if P1 == X else P2 # who is currently playing
 
-board = [['', '', ''], ['', '', ''], ['', '', '']] # 1-2-3, 4-5-6, 7-8-9
+board = [['', '', ''], ['', '', ''], ['', '', '']] # 0-1-2, 3-4-5, 6-7-8
 """
 1 | 2 | 3
 =========
@@ -42,12 +42,14 @@ def main():
     BASIC_FONT = pygame.font.Font('freesansbold.ttf', 20)
 
     waiting_for_input = True
+    game_won = False
 
     # game loop
     while True:
         events = pygame.event.get()
-        if is_board_full(board): # end of game, stick here until we want to play again
-            draw_screen_data(board, 'We have a winner!', False)
+        if is_board_full(board) or not game_won == 0: # end of game, stick here until we want to play again
+            text = 'It\'s a tie!' if is_board_full(board) and game_won == 0 else ('Player ' + str(game_won) + ' has won!')
+            draw_screen_data(board, text, False)
             for event in events:
                 if event.type == QUIT:
                     pygame.quit()
@@ -56,20 +58,19 @@ def main():
             FPSCLOCK.tick(FPS)
             continue
 
-        waiting_for_input = True
-
         draw_screen_data(board, 'Player ' + ('1' if current_turn == P1 else '2') + ', it\'s your turn', True)
 
         if current_turn == P2 and P2_CPU:
             # computer move
             draw_screen_data(board, 'The CPU is making its turn...', False)
-            waiting_for_input = False
             current_turn = P1
             pygame.display.update()
             FPSCLOCK.tick(FPS)
             pygame.time.wait(SLEEP_TIME) # slack between turns
+            game_won = is_board_winning(board)
             continue
 
+        waiting_for_input = True
         clicked_button = None
 
         for event in events:
@@ -78,10 +79,12 @@ def main():
                 sys.exit()
             elif event.type == MOUSEBUTTONDOWN:
                 mx, my = event.pos
-                clicked_button = get_button_clicked(mx, my)
+                clicked_button = get_button_clicked_from_mouse(mx, my)
             elif event.type == KEYDOWN:
                 # keys 0-8 select a square
-                pass
+                key = event.key # 49-57 for keys 1-9
+                if key >= 49 and key <= 57:
+                    clicked_button = get_button_clicked_from_key(key - 49)
 
         if waiting_for_input:
             # waiting for player to select a square
@@ -89,9 +92,7 @@ def main():
                 # syntactic sugars
                 X_COORD = 0
                 Y_COORD = 1
-                if not board[clicked_button[X_COORD]][clicked_button[Y_COORD]] == '':
-                    print('This square isn\'t empty')
-                else:
+                if board[clicked_button[X_COORD]][clicked_button[Y_COORD]] == '':
                     # make the move, advancing turn
                     board[clicked_button[X_COORD]][clicked_button[Y_COORD]] = current_turn # set the piece here to the current player's piece
                     current_turn = P2 if current_turn == P1 else P1
@@ -102,6 +103,7 @@ def main():
         FPSCLOCK.tick(FPS)
         if not waiting_for_input:
             pygame.time.wait(SLEEP_TIME) # slack between turns
+            game_won = is_board_winning(board)
 
 def draw_board(board, highlights):
     """
@@ -155,7 +157,16 @@ def highlight_space(x, y):
     """
     pygame.draw.rect(DISPLAY, BLUE, pygame.Rect((2 * x + 1) * 50 + 5, (2 * y + 1) * 50 + 5, 91, 91), 10)
 
-def get_button_clicked(x, y):
+def get_button_clicked_from_key(num):
+    """
+    Gets the button clicked based on tile num
+    """
+    if (num < 0 or num > 8):
+        return None
+
+    return tile_num_to_board_coords(num)
+
+def get_button_clicked_from_mouse(x, y):
     """
     Converts window coordinates to board coordinates
     """
@@ -166,7 +177,47 @@ def get_button_clicked(x, y):
     board_y = math.floor((y - 50) / 100)
     return board_x, board_y
 
+def tile_num_to_board_coords(num):
+    """
+    Converts a number from 0-8 to board coords
+        i.e. 0 = (0, 0); 3 = (0, 1). See line 26 / declaration of 'board' global variable
+    """
+    return (num % 3, math.floor(num / 3))
+
+def is_board_winning(board):
+    """
+    Determines if someone has won the game. Returns 1 or 2 if so depending on player, 0 otherwise
+    (Does not look for ties, that is covered in 'is_board_full')
+    """
+    winning_combos = [
+        [0, 1, 2],
+        [3, 4, 5],
+        [6, 7, 8],
+		[0, 3, 6],
+		[1, 4, 7],
+		[2, 5, 8],
+		[0, 4, 8],
+		[2, 4, 6]
+    ]
+
+    # syntactic sugars for board
+    X_COORD = 0
+    Y_COORD = 1
+
+    for combo in range(len(winning_combos)):
+        tile_0 = board[tile_num_to_board_coords(winning_combos[combo][0])[X_COORD]][tile_num_to_board_coords(winning_combos[combo][0])[Y_COORD]]
+        tile_1 = board[tile_num_to_board_coords(winning_combos[combo][1])[X_COORD]][tile_num_to_board_coords(winning_combos[combo][1])[Y_COORD]]
+        tile_2 = board[tile_num_to_board_coords(winning_combos[combo][2])[X_COORD]][tile_num_to_board_coords(winning_combos[combo][2])[Y_COORD]]
+        
+        if tile_0 and tile_0 == tile_1 and tile_1 == tile_2:
+            return 1 if tile_0 == X else 2
+
+    return 0
+
 def is_board_full(board):
+    """
+    Returns true if board is full, False otherwise
+    """
     for x in range(0, 3):
         for y in range(0, 3):
             if not board[x][y]:
