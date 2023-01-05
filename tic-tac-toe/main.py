@@ -1,4 +1,4 @@
-import pygame, sys, math
+import pygame, sys, math, copy
 from pygame.locals import *
 
 WIN_WIDTH = 400
@@ -20,7 +20,7 @@ X = 'x' # moves first
 O = 'o'
 P1 = X # the piece player 1 has
 P2 = O # the piece player 2 has
-P2_CPU = False # is player 2 a computer player or not?
+P2_CPU = True # is player 2 a computer player or not?
 current_turn = P1 if P1 == X else P2 # who is currently playing
 
 board = [['', '', ''], ['', '', ''], ['', '', '']] # 0-1-2, 3-4-5, 6-7-8
@@ -63,6 +63,38 @@ def main():
         if current_turn == P2 and P2_CPU:
             # computer move
             draw_screen_data(board, 'The CPU is making its turn...', False)
+
+            # syntactic sugars for board
+            X_COORD = 0
+            Y_COORD = 1
+
+            move = -1 # tile number
+
+            # can I win on the next move, or
+            # can the player win on the next move?
+            for attempt in range(3):
+                if attempt < 2:
+                    for tile in range(9):
+                        piece_here = board[tile_num_to_board_coords(tile)[X_COORD]][tile_num_to_board_coords(tile)[Y_COORD]]
+                        opposite_turn = P2 if current_turn == P1 else P1
+                        if piece_here == '':
+                            board_copy = copy.deepcopy(board) # what would the board look like if I made this move?
+                            board_copy[tile_num_to_board_coords(tile)[X_COORD]][tile_num_to_board_coords(tile)[Y_COORD]] = current_turn if attempt == 0 else opposite_turn
+                            # prioritize me winning over the opponent
+                            if is_board_winning(board_copy):
+                                move = tile
+                                break
+
+            if move == -1: # still not found a move yet
+                BEST_MOVES = [4,0,2,6,8,1,3,5,7] # if I must make a move arbitarily, this is the order from highest-lowest priority to choose from
+                for tile in range(len(BEST_MOVES)):
+                    piece_here = board[tile_num_to_board_coords(BEST_MOVES[tile])[X_COORD]][tile_num_to_board_coords(BEST_MOVES[tile])[Y_COORD]]
+                    if piece_here == '':
+                        move = BEST_MOVES[tile]
+                        break
+
+            board[tile_num_to_board_coords(move)[X_COORD]][tile_num_to_board_coords(move)[Y_COORD]] = current_turn
+            # wrap up turn
             current_turn = P1
             pygame.display.update()
             FPSCLOCK.tick(FPS)
