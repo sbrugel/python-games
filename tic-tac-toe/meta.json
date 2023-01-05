@@ -1,7 +1,30 @@
 {
     "name": "Tic-Tac-Toe",
+    "remixed": false,
+    "options": {
+        "opt1": {
+            "name": "Player 1 Piece",
+            "type": "dropdown",
+            "options": ["X (goes first)", "O (goes last)"]
+        },
+        "opt2": {
+            "name": "Number of Players",
+            "type": "dropdown",
+            "options": ["1 (with CPU)", "2"]
+        },
+        "opt3": {
+            "name": "X Color",
+            "type": "color",
+            "default": "#ff0000"
+        },
+        "opt4": {
+            "name": "O Color",
+            "type": "color",
+            "default": "#0000ff"
+        }
+    },
     "colors": {
-        "foreground": "#ffffff",
-        "background": "#0000ff"
+        "foreground": "#0000ff",
+        "background": "#e6918e"
     }
 }

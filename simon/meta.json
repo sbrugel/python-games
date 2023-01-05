@@ -1,5 +1,6 @@
 {
     "name": "Simon",
+    "remixed": true,
     "options": {
         "opt1": {
             "name": "Memorization Difficulty",

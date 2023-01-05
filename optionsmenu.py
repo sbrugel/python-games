@@ -1,9 +1,7 @@
 from tkinter import *
 from tkinter import ttk, colorchooser, messagebox
 
-import json
-import sys
-import systemcall
+import json, sys, systemcall
 
 class Window():
     game_folder = sys.argv[1]

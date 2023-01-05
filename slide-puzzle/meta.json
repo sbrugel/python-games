@@ -1,5 +1,6 @@
 {
     "name": "Slide Puzzle",
+    "remixed": true,
     "options": {
         "opt1": {
             "name": "Starting Board Size",

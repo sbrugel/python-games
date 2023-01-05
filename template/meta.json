@@ -1,5 +1,6 @@
 {
     "name": "Pygame Template",
+    "remixed": true,
     "colors": {
         "foreground": "#ffffff",
         "background": "#0000ff"

@@ -23,3 +23,6 @@ The player controls a small squirrel that must hop around the scrren. There are 
 - [Change] Allow moving in both horizontal and vertical directions at the same time
 - [Refactor] Dictionaries for game structures are now separate object files
 - [Docs] Function documentation and additional comments added
+
+## Todo
+- Add stopwatch for survival time

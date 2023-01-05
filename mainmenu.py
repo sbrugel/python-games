@@ -1,8 +1,6 @@
 from tkinter import *
 
-import json
-import os
-import systemcall
+import json, os, systemcall
 
 class Window():
     dir_path = os.path.dirname(os.path.realpath(__file__)) # the file currently being ran (mainmenu.py)
@@ -28,7 +26,7 @@ class Window():
             f = open(meta)
             data = json.load(f)
 
-            assert 'name' in data and 'colors' in data, 'The following meta file is missing a required property: ' + meta
+            assert 'name' in data and 'colors' in data and 'remixed' in data, 'The following meta file is missing a required property: ' + meta
 
             # we add a lambda (anon function) so it doesn't always run on start, only when clicked
             self.games.update({meta[:meta.find('meta.json')]: Button(self.root, text = data['name'], 
@@ -37,17 +35,36 @@ class Window():
                 fg = data['colors']['foreground'])})
             f.close()
 
-        # add components (title and buttons) to win
-        Label(self.root, text = 'Python Games', font = ("Arial 20 bold")).place(x = 10, y = 10)
-
         # width and height get updated as games added (3 game buttons per row)
         width = 0
         height = 100
         
-        i = 10 # current width to place button at
+        # add components (title and buttons) to win
+        # place original creations on top
+        Label(self.root, text = 'Original', font = ("Arial 20 bold")).place(x = 10, y = 10)
+        width, height = self.place_games(False, width, height)
 
+        # then remixed things
+        height += 70
+        Label(self.root, text = 'Remixed', font = ("Arial 20 bold")).place(x = 10, y = height - 90)
+        width, height = self.place_games(True, width, height)
+
+        self.root.title('Python Games')
+        self.root.geometry(str(width) + 'x' + str(height))
+        self.root.mainloop()
+
+    def place_games(self, remixed_flag, width, height):
+        """
+        Place buttons for games down. If 'remixed_flag' is true, only places games that are remixes according to their meta.json file
+        """
+        i = 10 # current width to place button at
         games_loaded = 0
         for game in self.games:
+            data = json.load(open(game + '\\meta.json'))
+            check = data['remixed'] if not remixed_flag else not data['remixed']
+            if check:
+                continue
+
             # place button down, get width after updating idletasks (which updates component sizes)
             self.games[game].place(x = i, y = height - 50)
             self.root.update_idletasks() 
@@ -63,8 +80,6 @@ class Window():
                 height += 30
                 i = 10
 
-        self.root.title('Python Games')
-        self.root.geometry(str(width) + 'x' + str(height))
-        self.root.mainloop()
+        return width, height
 
 win = Window()

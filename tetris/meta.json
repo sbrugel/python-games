@@ -1,5 +1,6 @@
 {
     "name": "Tetris",
+    "remixed": true,
     "options": {
         "opt1": {
             "name": "Disable Ghost Pieces",

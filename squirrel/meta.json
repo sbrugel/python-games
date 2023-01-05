@@ -1,5 +1,6 @@
 {
     "name": "Squirrel Game",
+    "remixed": true,
     "options": {
         "opt1": {
             "name": "Survival Mode",

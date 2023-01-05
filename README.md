@@ -18,12 +18,13 @@ Another, arguably bigger, feature is a dynamic options menu. You may have notice
 
 ## List of Games
 ### Original
-TBA
+- [Memory Puzzle](https://github.com/sbrugel/python-games/tree/master/tic-tac-toe): A recreation of Tic-Tac-Toe, with modes for one player against a CPU and two players playing together locally.
 
 ### Recreated / Remixed
 - [Memory Puzzle](https://github.com/sbrugel/python-games/tree/master/memory-puzzle): The player is presented with a 4x4 to 10x10 board of boxes covering icons of different shapes and colors. The player must match all pairs of icons to win.
 - [Slide Puzzle](https://github.com/sbrugel/python-games/tree/master/slide-puzzle): On a square board that has number boxes in all spaces except one, the player must slide tiles around until the boxes are in numerical order.
 - [Simon](https://github.com/sbrugel/python-games/tree/master/simon): The player must mimic a pattern given to them by clicking colored buttons in order. Each time the pattern is correctly simulated, the pattern length increases. The goal is to keep this pattern going for as long as possible.
+- [Squirrel](https://github.com/sbrugel/python-games/tree/master/squirrel): The player controls a small squirrel that must hop around the scrren, trying to survive being eaten by other squirrels. There are two game modes.
 - [Snake](https://github.com/sbrugel/python-games/tree/master/snake): The player controls the direction of a snake on a board, aiming for fruits to increase their score and the snake's length. The goal of the game is to go as long as possible before the snake either runs into itself or into an edge.
 - [Tetris](https://github.com/sbrugel/python-games/tree/master/tetris): The player must guide falling blocks down to form rows filled with boxes, void of any gaps. When a complete row is formed, it is cleared and each row above moves down one row. The goal is to complete as many of these lines as possible until the screen fills up.
 
@@ -38,6 +39,7 @@ For example, here is the `meta.json` file for Simon:
 ```json
 {
     "name": "Simon",
+    "remixed": true,
     "options": {
         "opt1": {
             "name": "Memorization Difficulty",
@@ -64,8 +66,9 @@ For example, here is the `meta.json` file for Simon:
 ```
 
 - The first `name` key holds the name of the game. This is displayed on the game's button on the main menu, as well as the option menu's title.
+- The next `remixed` key is a boolean that states whether this game is a remix of an already-coded Pygame recreation or not (i.e. a game already done by Al Sweigart). This only impacts where the game is placed in the main menu, as original and remixed games are serparated.
 - The last `colors` key holds the foreground and background colors of both the game's main menu button and the option menu's colors.
-- The `options` key is more complex, and holds multiple embedded keys with unique names, each representing an option for the game.
+- The `options` key is more complex, and holds multiple embedded keys with unique names, each representing an option for the game. This is an optional field, since not all games may have/need customization options.
 
 ### Options Keys
 

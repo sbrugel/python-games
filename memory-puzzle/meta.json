@@ -1,5 +1,6 @@
 {
     "name": "Memory Puzzle",
+    "remixed": true,
     "options": {
         "opt1": {
             "name": "Starting Board Size",

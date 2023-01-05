@@ -1,6 +1,15 @@
 import pygame, sys, math, copy
 from pygame.locals import *
 
+sys.argv = sys.argv[1:] # remove first arg, that's the file name
+assert len(sys.argv) == 4, 'There must be exactly 4 args supplied'
+
+# arguments from cmd
+# 0 = player 1 piece, X or O
+# 1 = players, (0-1)
+# 2 = X color (hex)
+# 3 = O color (hex)
+
 WIN_WIDTH = 400
 WIN_HEIGHT = 400
 FPS = 60
@@ -12,15 +21,15 @@ BLUE = (0, 0, 255)
 
 BG_COLOR = WHITE
 LINE_COLOR = BLACK
-X_COLOR = RED
-O_COLOR = BLUE
+X_COLOR = sys.argv[2]
+O_COLOR = sys.argv[3]
 SLEEP_TIME = 500
 
 X = 'x' # moves first
 O = 'o'
-P1 = X # the piece player 1 has
-P2 = O # the piece player 2 has
-P2_CPU = True # is player 2 a computer player or not?
+P1 = X if int(sys.argv[0]) == 0 else O # the piece player 1 has
+P2 = O if int(sys.argv[0]) == 0 else X # the piece player 2 has
+P2_CPU = False if int(sys.argv[1]) == 1 else True # is player 2 a computer player or not?
 current_turn = P1 if P1 == X else P2 # who is currently playing
 
 board = [['', '', ''], ['', '', ''], ['', '', '']] # 0-1-2, 3-4-5, 6-7-8
@@ -242,7 +251,7 @@ def is_board_winning(board):
         tile_2 = board[tile_num_to_board_coords(winning_combos[combo][2])[X_COORD]][tile_num_to_board_coords(winning_combos[combo][2])[Y_COORD]]
         
         if tile_0 and tile_0 == tile_1 and tile_1 == tile_2:
-            return 1 if tile_0 == X else 2
+            return 1 if tile_0 == P1 else 2
 
     return 0
 
