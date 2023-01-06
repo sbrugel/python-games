@@ -18,7 +18,8 @@ Another, arguably bigger, feature is a dynamic options menu. You may have notice
 
 ## List of Games
 ### Original
-- [Memory Puzzle](https://github.com/sbrugel/python-games/tree/master/tic-tac-toe): A recreation of Tic-Tac-Toe, with modes for one player against a CPU and two players playing together locally.
+- [Pong](https://github.com/sbrugel/python-games/tree/master/pong): A recreation of Pong for two players to play locally.
+- [Tic-Tac-Toe](https://github.com/sbrugel/python-games/tree/master/tic-tac-toe): A recreation of Tic-Tac-Toe, with modes for one player against a CPU and two players playing together locally.
 
 ### Recreated / Remixed
 - [Memory Puzzle](https://github.com/sbrugel/python-games/tree/master/memory-puzzle): The player is presented with a 4x4 to 10x10 board of boxes covering icons of different shapes and colors. The player must match all pairs of icons to win.

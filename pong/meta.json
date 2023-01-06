@@ -1,8 +1,25 @@
 {
     "name": "Pong",
     "remixed": false,
+    "options": {
+        "opt1": {
+            "name": "Paddle Size",
+            "type": "dropdown",
+            "options": ["Small", "Normal", "Large"],
+            "defindex": 1
+        },
+        "opt2": {
+            "name": "Speed Increase on Hit?",
+            "type": "toggle"
+        },
+        "opt3": {
+            "name": "Ball & Paddle Color",
+            "type": "color",
+            "default": "#ffffff"
+        }
+    },
     "colors": {
         "foreground": "#ffffff",
-        "background": "#0000ff"
+        "background": "#000000"
     }
 }

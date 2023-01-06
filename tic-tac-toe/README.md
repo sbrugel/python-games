@@ -13,3 +13,6 @@ The first game I made completely on my own using PyGame. This is a recreation of
 - Can choose whether Player 1 has X (first turn) or O; also determines Player 2's piece
 - Can play as a single player against a CPU or two players locally against each other
 - X and O colors can be customized
+
+## Todo
+- Play again button

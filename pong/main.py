@@ -3,6 +3,14 @@ from ball import Ball
 from paddle import Paddle
 from pygame.locals import *
 
+sys.argv = sys.argv[1:] # remove first arg, that's the file name
+assert len(sys.argv) == 3, 'There must be exactly 3 args supplied'
+
+# arguments from cmd
+# 0 = paddle size (0-2)
+# 1 = ball speedup (0-1)
+# 2 = object colors (hex)
+
 dir_path = os.path.dirname(os.path.realpath(__file__))
 
 WIN_WIDTH = 700
@@ -14,10 +22,15 @@ WHITE = (255, 255, 255)
 GRAY = (127, 127, 127)
 
 BG_COLOR = BLACK
-OBJECT_COLOR = WHITE
-SLEEP_TIME = 0
+OBJECT_COLOR = sys.argv[2]
+SLEEP_TIME = 1000
 
 PADDLE_HEIGHT = 75
+if int(sys.argv[0]) == 0:
+    PADDLE_HEIGHT = 25
+elif int(sys.argv[0]) == 0:
+    PADDLE_HEIGHT = 125
+BALL_SPEEDUP = False if int(sys.argv[1]) == 0 else True
 BALL_RADIUS = 10
 BALL_VEL = 5
 PADDLE_VEL = 10
@@ -25,7 +38,7 @@ PADDLE_VEL = 10
 p1_score = p2_score = 0
 
 def main():
-    global FPSCLOCK, DISPLAY, BASIC_FONT, p1_score, p2_score
+    global FPSCLOCK, DISPLAY, BASIC_FONT, p1_score, p2_score, BALL_VEL
 
     pygame.init()
     
@@ -64,6 +77,19 @@ def main():
                 p2_score += 1
             draw_text(str(p1_score), 150, 75)
             draw_text(str(p2_score), WIN_WIDTH - 150, 75)
+
+            # if speedup on, reset velocity
+            BALL_VEL = 5
+            if ball.xvel < 0:
+                ball.xvel = -5
+            else:
+                ball.xvel = 5
+
+            if ball.yvel < 0:
+                ball.yvel = -5
+            else:
+                ball.yvel = 5  
+                
             pygame.display.update()
             FPSCLOCK.tick(FPS)
             pygame.time.wait(SLEEP_TIME)
@@ -79,6 +105,8 @@ def main():
         # ball bouncing off a paddle
         if ball.rect.colliderect(p1_paddle.rect) or ball.rect.colliderect(p2_paddle.rect):
             HIT_SOUND.play()
+            if BALL_SPEEDUP:
+                BALL_VEL += 0.5
             ball.xvel *= -1
             delta = 0
             if ball.rect.colliderect(p1_paddle.rect):
