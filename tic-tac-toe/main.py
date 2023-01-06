@@ -171,7 +171,7 @@ def draw_screen_data(board, text, highlights):
     """
     Draws the whole game layout from scratch, including text, board, and highlights (if enabled)
     """
-    DISPLAY.fill(WHITE)
+    DISPLAY.fill(BG_COLOR)
     turn_surf = BASIC_FONT.render(text, True, BLACK)
     turn_rect = turn_surf.get_rect()
     turn_rect.topleft = (5, WIN_HEIGHT - 25)

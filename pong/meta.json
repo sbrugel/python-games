@@ -1,0 +1,8 @@
+{
+    "name": "Pong",
+    "remixed": false,
+    "colors": {
+        "foreground": "#ffffff",
+        "background": "#0000ff"
+    }
+}
